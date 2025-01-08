@@ -1,0 +1,63 @@
+/* Stylizacja głównego okna */
+QMainWindow {
+    background-color: #F9F9F9;
+}
+
+/* Pasek narzędzi */
+QToolBar {
+    background-color: #F0F0F0;
+}
+
+/* Przycisk domyślny */
+QPushButton {
+    background-color: #ADD8E6;  /* Błękitny */
+    color: #000080;            /* Granatowy */
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+/* Przycisk 'Wyloguj' */
+QPushButton#logoutButton {
+    background-color: #FFCCCC; /* Czerwony */
+    color: #800000;           /* Ciemny czerwony */
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+/* Pola tekstowe */
+QLineEdit {
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* Listy rozwijane */
+QComboBox {
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #FFFFFF;
+}
+
+/* Etykiety */
+QLabel {
+    font-size: 14px;
+    color: #333333;
+}
+
+/* Tabele */
+QTableWidget {
+    border: 1px solid #DDDDDD;
+    background-color: #FFFFFF;
+}
+
+QHeaderView::section {
+    background-color: #E0E0E0;
+    border: 1px solid #CCCCCC;
+    padding: 5px;
+    font-weight: bold;
+}
