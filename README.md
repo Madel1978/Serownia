@@ -8,12 +8,12 @@ Aplikacja do zarządzania magazynem i produkcją wyrobów mleczarskich.
 - Logowanie i rejestracja użytkowników
 - ...
 
-## Instalacja
-1. `git clone https://github.com/Madel1978/Serownia.git`
-2. `cd Serownia`
-3. (opcjonalnie) `python -m venv venv && source venv/bin/activate`
-4. `pip install -r requirements.txt`
-5. `python main.py`
+## Jak uruchomić?
+1. Sklonuj repozytorium: `git clone https://github.com/Madel1978/Serownia.git`
+2. Przejdź do folderu: `cd Serownia`
+3. (Opcjonalnie) utwórz wirtualne środowisko: `python -m venv venv && source venv/bin/activate`  
+4. Zainstaluj zależności: `pip install -r requirements.txt`
+5. Uruchom aplikację: `python main.py`
 
 ## Autor
 - Madel1978
