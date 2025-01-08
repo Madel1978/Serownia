@@ -1,8 +1,13 @@
 from typing import Optional, Any
 
 from PyQt5.QtWidgets import (
-    QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton,
-    QMessageBox, QComboBox
+    QDialog,
+    QVBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QMessageBox,
+    QComboBox,
 )
 from PyQt5.QtCore import Qt
 
@@ -16,7 +21,7 @@ class AddPackagingDialog(QDialog):
     def __init__(
         self,
         parent: Optional[Any] = None,  # Najczęściej QMainWindow lub inny widok
-        db_manager: Optional[Any] = None  # Docelowo: Optional[DBManager]
+        db_manager: Optional[Any] = None,  # Docelowo: Optional[DBManager]
     ) -> None:
         """
         Inicjalizuje dialog 'Dodaj nowe opakowanie', zawierający
@@ -58,10 +63,14 @@ class AddPackagingDialog(QDialog):
         np. db_manager.get_packaging_categories().
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można wczytać kategorii.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można wczytać kategorii."
+            )
             return
 
-        categories = self.db_manager.get_packaging_categories()  # np. [{"id":1, "name":"Słoiki"}, ...]
+        categories = (
+            self.db_manager.get_packaging_categories()
+        )  # np. [{"id":1, "name":"Słoiki"}, ...]
         for cat in categories:
             self.category_combo.addItem(cat["name"], cat["id"])
 
@@ -73,7 +82,9 @@ class AddPackagingDialog(QDialog):
         w przeciwnym razie wyświetla komunikat o błędzie.
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można dodać opakowania.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można dodać opakowania."
+            )
             return
 
         name = self.name_input.text().strip()
@@ -89,8 +100,12 @@ class AddPackagingDialog(QDialog):
         date_placeholder = ""
 
         try:
-            self.db_manager.add_packaging(name, quantity_placeholder, date_placeholder, category_id)
-            QMessageBox.information(self, "Sukces", f"Opakowanie '{name}' zostało dodane.")
+            self.db_manager.add_packaging(
+                name, quantity_placeholder, date_placeholder, category_id
+            )
+            QMessageBox.information(
+                self, "Sukces", f"Opakowanie '{name}' zostało dodane."
+            )
             self.accept()  # zamyka dialog (QDialog.Accepted)
         except Exception as e:
             QMessageBox.warning(self, "Błąd", f"Nie udało się dodać opakowania: {e}")

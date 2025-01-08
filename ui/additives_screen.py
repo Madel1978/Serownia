@@ -1,8 +1,6 @@
 from typing import Optional, List, Dict, Any
 
-from PyQt5.QtWidgets import (
-    QTableWidgetItem, QFileDialog, QMessageBox
-)
+from PyQt5.QtWidgets import QTableWidgetItem, QFileDialog, QMessageBox
 from PyQt5.QtCore import Qt
 
 # Dostosuj ścieżkę importu do struktury swojego projektu.
@@ -24,7 +22,7 @@ class AdditivesScreen(BaseListScreen):
     def __init__(
         self,
         parent: Optional[Any] = None,  # Najczęściej QMainWindow
-        db_manager: Optional[Any] = None  # Docelowo: Optional[DBManager]
+        db_manager: Optional[Any] = None,  # Docelowo: Optional[DBManager]
     ) -> None:
         """
         Inicjalizuje ekran 'Lista Dodatków' z kolumnami:
@@ -36,7 +34,14 @@ class AdditivesScreen(BaseListScreen):
         super().__init__(
             parent=parent,
             title="Lista Dodatków",
-            columns=["ID", "Nazwa", "Waga", "Dawkowanie", "Kategoria", "Data utworzenia"]
+            columns=[
+                "ID",
+                "Nazwa",
+                "Waga",
+                "Dawkowanie",
+                "Kategoria",
+                "Data utworzenia",
+            ],
         )
         self.db_manager = db_manager
 
@@ -48,7 +53,9 @@ class AdditivesScreen(BaseListScreen):
         self.table.setRowCount(0)
 
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można załadować dodatków.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można załadować dodatków."
+            )
             return
 
         # Przykładowo, db_manager.get_all_additives() zwraca listę słowników, np.:
@@ -114,7 +121,9 @@ class AdditivesScreen(BaseListScreen):
         wczytanie pliku CSV i dodanie nowych rekordów do bazy.
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można importować.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można importować."
+            )
             return
 
         file_dialog = QFileDialog(self, "Wybierz plik CSV z dodatkami")
@@ -134,10 +143,14 @@ class AdditivesScreen(BaseListScreen):
         i po zapisaniu w bazie wywołuje self.load_data().
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można dodać dodatku.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można dodać dodatku."
+            )
             return
 
-        QMessageBox.information(self, "Nowy dodatek", "Tu otwórz formularz do dodania dodatku.")
+        QMessageBox.information(
+            self, "Nowy dodatek", "Tu otwórz formularz do dodania dodatku."
+        )
         # Po zapisaniu w bazie:
         # self.load_data()
 
@@ -148,7 +161,9 @@ class AdditivesScreen(BaseListScreen):
         albo filtrować w pamięci, jak w tym przykładzie.
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – filtrowanie niemożliwe.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – filtrowanie niemożliwe."
+            )
             return
 
         filter_text = self.filter_input.text().strip().lower()
@@ -170,11 +185,17 @@ class AdditivesScreen(BaseListScreen):
             self.table.insertRow(row_index)
             self.table.setItem(row_index, 0, QTableWidgetItem(str(additive["id"])))
             self.table.setItem(row_index, 1, QTableWidgetItem(str(additive["name"])))
-            self.table.setItem(row_index, 2, QTableWidgetItem(str(additive.get("weight", ""))))
-            self.table.setItem(row_index, 3, QTableWidgetItem(str(additive.get("dosage", ""))))
+            self.table.setItem(
+                row_index, 2, QTableWidgetItem(str(additive.get("weight", "")))
+            )
+            self.table.setItem(
+                row_index, 3, QTableWidgetItem(str(additive.get("dosage", "")))
+            )
 
             category_id = additive.get("category_id", None)
-            self.table.setItem(row_index, 4, QTableWidgetItem(self.get_category_name(category_id)))
+            self.table.setItem(
+                row_index, 4, QTableWidgetItem(self.get_category_name(category_id))
+            )
 
             created_at = additive.get("created_at", "2024-01-01")
             self.table.setItem(row_index, 5, QTableWidgetItem(str(created_at)))

@@ -3,12 +3,13 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton
 from ui.background_screen import BackgroundScreen
 
+
 class ProductionScreen(BackgroundScreen):
     def __init__(self, parent=None):
         super().__init__(
             parent=parent,
             bg_image_path=r"c:\serownia\images\cheese.jpg",
-            panel_width=800  # Lub inna szerokość
+            panel_width=800,  # Lub inna szerokość
         )
 
         # Ustawiamy tytuł okna (opcjonalnie):
@@ -21,22 +22,24 @@ class ProductionScreen(BackgroundScreen):
         buttons = [
             {"name": "Nowa Produkcja", "action": self.new_production},
             {"name": "Baza Produkcji", "action": self.production_base},
-            {"name": "Produkty",       "action": self.products},
-            {"name": "Receptury",      "action": self.recipes},
-            {"name": "Pakowanie",      "action": self.packaging},
+            {"name": "Produkty", "action": self.products},
+            {"name": "Receptury", "action": self.recipes},
+            {"name": "Pakowanie", "action": self.packaging},
         ]
 
         # Dodaj przyciski do grid_layout
         for i, btn_info in enumerate(buttons):
             button = QPushButton(btn_info["name"])
-            button.setStyleSheet("""
+            button.setStyleSheet(
+                """
                 background-color: #ADD8E6;
                 color: #000080;
                 font-size: 24px;
                 font-weight: bold;
                 border-radius: 10px;
                 padding: 20px;
-            """)
+            """
+            )
             button.clicked.connect(btn_info["action"])
 
             # Umieszczamy w siatce: wiersz = i // 2, kol = i % 2
@@ -46,14 +49,16 @@ class ProductionScreen(BackgroundScreen):
 
         # Przycisk Powrót
         back_button = QPushButton("Powrót")
-        back_button.setStyleSheet("""
+        back_button.setStyleSheet(
+            """
             background-color: #FFCCCC;
             color: #800000;
             font-size: 24px;
             font-weight: bold;
             border-radius: 10px;
             padding: 15px;
-        """)
+        """
+        )
         back_button.clicked.connect(self.go_back_to_start)
         grid_layout.addWidget(back_button, (len(buttons) // 2) + 1, 0, 1, 2)
 

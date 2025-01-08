@@ -1,7 +1,16 @@
 from typing import Optional, Any, List, Tuple
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QGroupBox, QLabel,
-    QLineEdit, QPushButton, QComboBox, QMessageBox, QScrollArea
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QGridLayout,
+    QGroupBox,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QComboBox,
+    QMessageBox,
+    QScrollArea,
 )
 from PyQt5.QtCore import Qt
 from datetime import date
@@ -17,13 +26,13 @@ def parse_dosage(dosage_str: str) -> Tuple[float, str]:
     parts = dosage_str.split()
     if len(parts) == 1:
         try:
-            val = float(parts[0].replace(',', '.'))
+            val = float(parts[0].replace(",", "."))
         except ValueError:
             val = 0.0
         return val, ""
     elif len(parts) >= 2:
         try:
-            val = float(parts[0].replace(',', '.'))
+            val = float(parts[0].replace(",", "."))
         except ValueError:
             val = 0.0
         unit = parts[1]
@@ -44,14 +53,13 @@ class FermentedProductionProtocolScreen(QWidget):
     """
 
     def __init__(
-        self,
-        parent: Optional[Any] = None,
-        db_manager: Optional[DBManager] = None
+        self, parent: Optional[Any] = None, db_manager: Optional[DBManager] = None
     ):
         super().__init__(parent)
         print(
             ">>> FermentedProductionProtocolScreen - constructor called!",
-            "isVisible=", self.isVisible()
+            "isVisible=",
+            self.isVisible(),
         )
         self.parent = parent
         self.db_manager = db_manager
@@ -60,7 +68,8 @@ class FermentedProductionProtocolScreen(QWidget):
         self.resize(800, 600)
 
         # Ustawiamy pastelowy styl (identyczny jak w protokole sera).
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             QWidget {
                 background-color: #FFF9FA; /* bardzo jasny róż */
             }
@@ -94,7 +103,8 @@ class FermentedProductionProtocolScreen(QWidget):
                 padding: 6px 12px;
                 font-weight: bold;
             }
-        """)
+        """
+        )
 
         # Atrybut do przechowania aktualnie edytowanego protokołu (None => nowy)
         self.current_protocol_id: Optional[int] = None
@@ -198,8 +208,6 @@ class FermentedProductionProtocolScreen(QWidget):
 
         # Tutaj wypełniamy listę produktów, np. tylko te z kategorii "Napoje fermentowane":
         self.fill_fermented_products()
-
-
 
     def fill_fermented_products(self):
         """
@@ -381,9 +389,9 @@ class FermentedProductionProtocolScreen(QWidget):
         lbl_param1 = QLabel("Parametr 1")
         lbl_param2 = QLabel("Parametr 2")
 
-        gridC.addWidget(lbl_empty,   0, 0)
-        gridC.addWidget(lbl_param1,  0, 1)
-        gridC.addWidget(lbl_param2,  0, 2)
+        gridC.addWidget(lbl_empty, 0, 0)
+        gridC.addWidget(lbl_param1, 0, 1)
+        gridC.addWidget(lbl_param2, 0, 2)
 
         # ----------------------------------------------------------------
         # Wiersze 1–2: Dodanie kultur
@@ -397,25 +405,29 @@ class FermentedProductionProtocolScreen(QWidget):
         lbl_empty2 = QLabel("")  # po lewej, pusty
         lbl_empty2.setFixedWidth(label_width)
         lbl_temp_mleka = QLabel("Temp. mleka")
-        lbl_godzina    = QLabel("Godzina")
+        lbl_godzina = QLabel("Godzina")
 
-        gridC.addWidget(lbl_empty2,     1, 0)
+        gridC.addWidget(lbl_empty2, 1, 0)
         gridC.addWidget(lbl_temp_mleka, 1, 1)
-        gridC.addWidget(lbl_godzina,    1, 2)
+        gridC.addWidget(lbl_godzina, 1, 2)
 
         # Wiersz 2 (rzeczywiste pole nazwy czynności + 2 x QLineEdit)
         lbl_dodanie = QLabel("Dodanie kultur")
         lbl_dodanie.setFixedWidth(label_width)
 
-        self.dodanie_kultur_godzina_input = QLineEdit()  # w kodzie "godzina", ale etykietą opisaliśmy jako „Temp. mleka”
+        self.dodanie_kultur_godzina_input = (
+            QLineEdit()
+        )  # w kodzie "godzina", ale etykietą opisaliśmy jako „Temp. mleka”
         self.dodanie_kultur_godzina_input.setFixedWidth(field_width)
 
-        self.dodanie_kultur_czas_input = QLineEdit()     # w kodzie "czas", a etykieta to „Godzina”
+        self.dodanie_kultur_czas_input = (
+            QLineEdit()
+        )  # w kodzie "czas", a etykieta to „Godzina”
         self.dodanie_kultur_czas_input.setFixedWidth(field_width)
 
-        gridC.addWidget(lbl_dodanie,                   2, 0)
+        gridC.addWidget(lbl_dodanie, 2, 0)
         gridC.addWidget(self.dodanie_kultur_godzina_input, 2, 1)
-        gridC.addWidget(self.dodanie_kultur_czas_input,    2, 2)
+        gridC.addWidget(self.dodanie_kultur_czas_input, 2, 2)
 
         # ----------------------------------------------------------------
         # Wiersze 3–4: Rozlewanie
@@ -425,26 +437,30 @@ class FermentedProductionProtocolScreen(QWidget):
         # Wiersz 3 (etykiety param1, param2)
         lbl_empty3 = QLabel("")
         lbl_empty3.setFixedWidth(label_width)
-        lbl_godzina_rozl  = QLabel("Godzina")
-        lbl_czas_rozl     = QLabel("Czas trwania")
+        lbl_godzina_rozl = QLabel("Godzina")
+        lbl_czas_rozl = QLabel("Czas trwania")
 
-        gridC.addWidget(lbl_empty3,      3, 0)
+        gridC.addWidget(lbl_empty3, 3, 0)
         gridC.addWidget(lbl_godzina_rozl, 3, 1)
-        gridC.addWidget(lbl_czas_rozl,    3, 2)
+        gridC.addWidget(lbl_czas_rozl, 3, 2)
 
         # Wiersz 4 (nazwa czynności + QLineEdit)
         lbl_rozlewanie = QLabel("Rozlewanie")
         lbl_rozlewanie.setFixedWidth(label_width)
 
-        self.rozlewanie_start_input = QLineEdit()  # w kodzie "start", etykieta: „Godzina”
+        self.rozlewanie_start_input = (
+            QLineEdit()
+        )  # w kodzie "start", etykieta: „Godzina”
         self.rozlewanie_start_input.setFixedWidth(field_width)
 
-        self.rozlewanie_end_input   = QLineEdit()  # w kodzie "end",   etykieta: „Czas trwania”
+        self.rozlewanie_end_input = (
+            QLineEdit()
+        )  # w kodzie "end",   etykieta: „Czas trwania”
         self.rozlewanie_end_input.setFixedWidth(field_width)
 
-        gridC.addWidget(lbl_rozlewanie,         4, 0)
+        gridC.addWidget(lbl_rozlewanie, 4, 0)
         gridC.addWidget(self.rozlewanie_start_input, 4, 1)
-        gridC.addWidget(self.rozlewanie_end_input,   4, 2)
+        gridC.addWidget(self.rozlewanie_end_input, 4, 2)
 
         # ----------------------------------------------------------------
         # Wiersze 5–6: Inkubacja
@@ -456,9 +472,9 @@ class FermentedProductionProtocolScreen(QWidget):
         lbl_ink_temp = QLabel("Temperatura")
         lbl_ink_czas = QLabel("Czas trwania")
 
-        gridC.addWidget(lbl_empty4,     5, 0)
-        gridC.addWidget(lbl_ink_temp,   5, 1)
-        gridC.addWidget(lbl_ink_czas,   5, 2)
+        gridC.addWidget(lbl_empty4, 5, 0)
+        gridC.addWidget(lbl_ink_temp, 5, 1)
+        gridC.addWidget(lbl_ink_czas, 5, 2)
 
         lbl_inkubacja = QLabel("Inkubacja")
         lbl_inkubacja.setFixedWidth(label_width)
@@ -469,9 +485,9 @@ class FermentedProductionProtocolScreen(QWidget):
         self.inkubacja_czas_input = QLineEdit()  # w kodzie "czas"
         self.inkubacja_czas_input.setFixedWidth(field_width)
 
-        gridC.addWidget(lbl_inkubacja,           6, 0)
+        gridC.addWidget(lbl_inkubacja, 6, 0)
         gridC.addWidget(self.inkubacja_temp_input, 6, 1)
-        gridC.addWidget(self.inkubacja_czas_input,  6, 2)
+        gridC.addWidget(self.inkubacja_czas_input, 6, 2)
 
         # ----------------------------------------------------------------
         # Wiersze 7–8: Chłodzenie
@@ -483,7 +499,7 @@ class FermentedProductionProtocolScreen(QWidget):
         lbl_chlodz_godz = QLabel("Godzina")
         lbl_chlodz_temp = QLabel("Temp. zadana")
 
-        gridC.addWidget(lbl_empty5,      7, 0)
+        gridC.addWidget(lbl_empty5, 7, 0)
         gridC.addWidget(lbl_chlodz_godz, 7, 1)
         gridC.addWidget(lbl_chlodz_temp, 7, 2)
 
@@ -496,14 +512,12 @@ class FermentedProductionProtocolScreen(QWidget):
         self.chlodzenie_temp_end_input = QLineEdit()
         self.chlodzenie_temp_end_input.setFixedWidth(field_width)
 
-        gridC.addWidget(lbl_chlodzenie,               8, 0)
-        gridC.addWidget(self.chlodzenie_godzina_input,   8, 1)
-        gridC.addWidget(self.chlodzenie_temp_end_input,  8, 2)
+        gridC.addWidget(lbl_chlodzenie, 8, 0)
+        gridC.addWidget(self.chlodzenie_godzina_input, 8, 1)
+        gridC.addWidget(self.chlodzenie_temp_end_input, 8, 2)
 
         groupC.setLayout(gridC)
         self.main_layout.addWidget(groupC)
-
-
 
     # ----------------------------------------------------------------
     # D. Ewidencja partii (15 wierszy)
@@ -609,7 +623,7 @@ class FermentedProductionProtocolScreen(QWidget):
             self.chlodzenie_temp_end_input.clear()
 
             # Sekcja D (partie)
-            for (part_edit, weight_edit, comment_edit) in self.parties_lines:
+            for part_edit, weight_edit, comment_edit in self.parties_lines:
                 part_edit.clear()
                 weight_edit.clear()
                 comment_edit.clear()
@@ -628,7 +642,7 @@ class FermentedProductionProtocolScreen(QWidget):
         # ISTNIEJĄCY protokół
         # ----------------------------------------------------------------
         self.current_protocol_id = record_data.get("id", None)
-        date_str   = record_data.get("date", "")
+        date_str = record_data.get("date", "")
         series_str = record_data.get("series", "")
         product_id = record_data.get("product_id", None)
 
@@ -649,14 +663,16 @@ class FermentedProductionProtocolScreen(QWidget):
                 QMessageBox.warning(
                     self,
                     "Uwaga",
-                    f"Produkt o ID={product_id} nie istnieje w bazie. Ustawiam Wybierz..."
+                    f"Produkt o ID={product_id} nie istnieje w bazie. Ustawiam Wybierz...",
                 )
             if self.product_combo.count() > 0:
                 self.product_combo.setCurrentIndex(0)
 
         # Pobierz szczegóły z fermented_production_details (lub innej Twojej metody)
         if self.db_manager and self.current_protocol_id is not None:
-            details = self.db_manager.get_fermented_production_details(self.current_protocol_id)
+            details = self.db_manager.get_fermented_production_details(
+                self.current_protocol_id
+            )
             if details:
                 # Ilość surowca, pH, Rodzaj mleka itp.
                 amt_str = details.get("amt", "")  # Ilość surowca
@@ -681,8 +697,12 @@ class FermentedProductionProtocolScreen(QWidget):
                 self.pasteur_combo.setCurrentIndex(idx_pasteur)
 
                 # Sekcja C – 4 czynności
-                self.dodanie_kultur_godzina_input.setText(details.get("dod_kultur_godz", ""))
-                self.dodanie_kultur_czas_input.setText(details.get("dod_kultur_czas", ""))
+                self.dodanie_kultur_godzina_input.setText(
+                    details.get("dod_kultur_godz", "")
+                )
+                self.dodanie_kultur_czas_input.setText(
+                    details.get("dod_kultur_czas", "")
+                )
 
                 self.rozlewanie_start_input.setText(details.get("rozl_start", ""))
                 self.rozlewanie_end_input.setText(details.get("rozl_end", ""))
@@ -715,8 +735,10 @@ class FermentedProductionProtocolScreen(QWidget):
         if product_id:
             self.fill_additives_from_db(product_id)
 
-        print(f">>> load_from_record(Napoje ferm.): ID={self.current_protocol_id}, "
-            f"date={date_str}, series={series_str}, product_id={product_id}")
+        print(
+            f">>> load_from_record(Napoje ferm.): ID={self.current_protocol_id}, "
+            f"date={date_str}, series={series_str}, product_id={product_id}"
+        )
 
     def save_protocol(self) -> None:
         """
@@ -732,22 +754,26 @@ class FermentedProductionProtocolScreen(QWidget):
         # ----------------------------------------------------------------
         # 1) Sekcja A: parametry
         # ----------------------------------------------------------------
-        product_id  = self.product_combo.currentData()
-        date_str    = self.date_input.text().strip()
-        series_str  = self.series_input.text().strip()
+        product_id = self.product_combo.currentData()
+        date_str = self.date_input.text().strip()
+        series_str = self.series_input.text().strip()
 
         # Rodzaj mleka (milkType_combo) oraz ilość (milkAmount_input)
         milk_type_str = self.milkType_combo.currentText().strip()  # <-- Rodzaj mleka
-        amt_str       = self.milkAmount_input.text().strip()       # np. "ilość mleka"
-        ph_str        = self.ph_input.text().strip()
-        pasteur_str   = self.pasteur_combo.currentText().strip()
+        amt_str = self.milkAmount_input.text().strip()  # np. "ilość mleka"
+        ph_str = self.ph_input.text().strip()
+        pasteur_str = self.pasteur_combo.currentText().strip()
 
         # Walidacja minimalna:
         if not date_str or not series_str or not amt_str:
-            QMessageBox.warning(self, "Błąd", "Uzupełnij datę, numer serii i ilość mleka.")
+            QMessageBox.warning(
+                self, "Błąd", "Uzupełnij datę, numer serii i ilość mleka."
+            )
             return
         if product_id is None or product_id == -1:
-            QMessageBox.warning(self, "Błąd", "Nie wybrano poprawnego produktu (Napoje ferm.).")
+            QMessageBox.warning(
+                self, "Błąd", "Nie wybrano poprawnego produktu (Napoje ferm.)."
+            )
             return
 
         # sprawdź, czy amt_str to liczba
@@ -764,12 +790,12 @@ class FermentedProductionProtocolScreen(QWidget):
         dod_kultur_czas_str = self.dodanie_kultur_czas_input.text().strip()
 
         rozl_start_str = self.rozlewanie_start_input.text().strip()
-        rozl_end_str   = self.rozlewanie_end_input.text().strip()
+        rozl_end_str = self.rozlewanie_end_input.text().strip()
 
         ink_temp_str = self.inkubacja_temp_input.text().strip()
         ink_czas_str = self.inkubacja_czas_input.text().strip()
 
-        chl_godzina_str  = self.chlodzenie_godzina_input.text().strip()
+        chl_godzina_str = self.chlodzenie_godzina_input.text().strip()
         chl_temp_end_str = self.chlodzenie_temp_end_input.text().strip()
 
         try:
@@ -788,7 +814,6 @@ class FermentedProductionProtocolScreen(QWidget):
                     amt=amt_str,
                     ph=ph_str,
                     pasteryzacja=pasteur_str,
-
                     # 4 czynności:
                     dod_kultur_godz=dod_kultur_godz_str,
                     dod_kultur_czas=dod_kultur_czas_str,
@@ -797,21 +822,18 @@ class FermentedProductionProtocolScreen(QWidget):
                     ink_temp=ink_temp_str,
                     ink_czas=ink_czas_str,
                     chl_godz=chl_godzina_str,
-                    chl_temp_end=chl_temp_end_str
+                    chl_temp_end=chl_temp_end_str,
                 )
                 self.current_protocol_id = new_id
                 QMessageBox.information(
                     self,
                     "Sukces",
-                    f"Protokół (Napoje fermentowane) '{series_str}' zapisany (NOWY)."
+                    f"Protokół (Napoje fermentowane) '{series_str}' zapisany (NOWY).",
                 )
             else:
                 # EDYCJA
                 self.db_manager.update_production_record(
-                    self.current_protocol_id,
-                    date_str,
-                    series_str,
-                    product_id
+                    self.current_protocol_id, date_str, series_str, product_id
                 )
                 self.db_manager.update_fermented_production_details(
                     production_record_id=self.current_protocol_id,
@@ -826,13 +848,13 @@ class FermentedProductionProtocolScreen(QWidget):
                     ink_temp=ink_temp_str,
                     ink_czas=ink_czas_str,
                     chl_godz=chl_godzina_str,
-                    chl_temp_end=chl_temp_end_str
+                    chl_temp_end=chl_temp_end_str,
                 )
                 QMessageBox.information(
                     self,
                     "Sukces",
                     f"Zaktualizowano protokół (Napoje fermentowane) '{series_str}' "
-                    f"(ID={self.current_protocol_id})."
+                    f"(ID={self.current_protocol_id}).",
                 )
 
             # ----------------------------------------------------------------
@@ -841,9 +863,9 @@ class FermentedProductionProtocolScreen(QWidget):
             record_id = self.current_protocol_id
             self.db_manager.clear_ser_production_additives_for_record(record_id)
 
-            for (cat_edit, add_edit, dose_edit) in self.additive_lines:
-                cat_str  = cat_edit.text().strip()
-                add_str  = add_edit.text().strip()
+            for cat_edit, add_edit, dose_edit in self.additive_lines:
+                cat_str = cat_edit.text().strip()
+                add_str = add_edit.text().strip()
                 dose_str = dose_edit.text().strip()
 
                 # Pomijamy pusty wiersz
@@ -852,18 +874,11 @@ class FermentedProductionProtocolScreen(QWidget):
 
                 # Wstaw do ser_production_additives (3 kolumny)
                 self.db_manager.add_ser_production_additive_3col(
-                    record_id,
-                    cat_str,
-                    add_str,
-                    dose_str
+                    record_id, cat_str, add_str, dose_str
                 )
 
         except Exception as e:
-            QMessageBox.warning(
-                self,
-                "Błąd",
-                f"Nie udało się zapisać protokołu: {e}"
-            )
+            QMessageBox.warning(self, "Błąd", f"Nie udało się zapisać protokołu: {e}")
 
     def generate_series_number(self) -> str:
         """
@@ -916,7 +931,5 @@ class FermentedProductionProtocolScreen(QWidget):
         """
         Czyści kolumnę 'Dawka' w 6 wierszach sekcji B.
         """
-        for (cat_edit, add_edit, dose_edit) in self.additive_lines:
+        for cat_edit, add_edit, dose_edit in self.additive_lines:
             dose_edit.clear()
-
-

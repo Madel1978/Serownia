@@ -3,7 +3,11 @@
 from typing import Optional, Any, List
 
 from PyQt5.QtWidgets import (
-    QLineEdit, QTableWidgetItem, QMessageBox, QComboBox, QPushButton
+    QLineEdit,
+    QTableWidgetItem,
+    QMessageBox,
+    QComboBox,
+    QPushButton,
 )
 from PyQt5.QtCore import Qt
 
@@ -27,9 +31,7 @@ class ProductsListScreen(BaseCrudListScreen):
     """
 
     def __init__(
-        self,
-        parent: Optional[Any] = None,
-        db_manager: Optional[DBManager] = None
+        self, parent: Optional[Any] = None, db_manager: Optional[DBManager] = None
     ) -> None:
         """
         Inicjalizuje ekran "Lista Produktów" z kolumnami:
@@ -53,8 +55,8 @@ class ProductsListScreen(BaseCrudListScreen):
                 "Kategoria",
                 "Skład",
                 "Edytuj/Zapisz",
-                "Usuń"
-            ]
+                "Usuń",
+            ],
         )
         print(f"[DEBUG] ProductsListScreen __init__ done. db_manager={db_manager}")
 
@@ -70,7 +72,9 @@ class ProductsListScreen(BaseCrudListScreen):
 
         if not self.db_manager:
             print("[DEBUG] Brak db_manager! Nie można załadować produktów.")
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można załadować produktów.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można załadować produktów."
+            )
             return
 
         print("[DEBUG] Pobieram produkty z bazy...")
@@ -84,12 +88,11 @@ class ProductsListScreen(BaseCrudListScreen):
         if filter_text:
             ft_lower = filter_text.lower()
             before_count = len(products)
-            products = [
-                p for p in products
-                if ft_lower in p["name"].lower()
-            ]
+            products = [p for p in products if ft_lower in p["name"].lower()]
             after_count = len(products)
-            print(f"[DEBUG] Filtr '{filter_text}' – przed filtrem={before_count}, po filtrem={after_count}")
+            print(
+                f"[DEBUG] Filtr '{filter_text}' – przed filtrem={before_count}, po filtrem={after_count}"
+            )
 
         # 3. Pobieramy listę kategorii do QComboBox
         print("[DEBUG] Pobieram listę kategorii produktu...")
@@ -130,13 +133,17 @@ class ProductsListScreen(BaseCrudListScreen):
 
             # 3: Skład (przycisk -> ProductCompositionScreen)
             composition_button = QPushButton("Skład")
-            composition_button.setStyleSheet("""
+            composition_button.setStyleSheet(
+                """
                 background-color: #ADD8E6;
                 font-size: 12px;
                 border-radius: 8px;
                 padding: 5px 10px;
-            """)
-            composition_button.clicked.connect(lambda _, r=row_index: self.show_composition(r))
+            """
+            )
+            composition_button.clicked.connect(
+                lambda _, r=row_index: self.show_composition(r)
+            )
             self.table.setCellWidget(row_index, 3, composition_button)
 
             # 4: Edytuj/Zapisz
@@ -147,7 +154,9 @@ class ProductsListScreen(BaseCrudListScreen):
             delete_button = self.create_delete_button(row_index)
             self.table.setCellWidget(row_index, 5, delete_button)
 
-            print(f"[DEBUG] Wstawiono produkt ID={prod_id}, name='{name_str}' do wiersza {row_index}.")
+            print(
+                f"[DEBUG] Wstawiono produkt ID={prod_id}, name='{name_str}' do wiersza {row_index}."
+            )
 
         print(f"[DEBUG] Wstawiono w tabeli {len(products)} wierszy.")
         self.table.resizeColumnsToContents()
@@ -163,13 +172,18 @@ class ProductsListScreen(BaseCrudListScreen):
             return
 
         from PyQt5.QtWidgets import QInputDialog
+
         name, ok = QInputDialog.getText(self, "Nowy produkt", "Nazwa produktu:")
         if ok and name.strip():
             category_id = 1  # tymczasowo
             try:
-                print(f"[DEBUG] add_new_item(): Dodaję produkt '{name.strip()}', cat_id={category_id}")
+                print(
+                    f"[DEBUG] add_new_item(): Dodaję produkt '{name.strip()}', cat_id={category_id}"
+                )
                 self.db_manager.add_product(name.strip(), category_id)
-                QMessageBox.information(self, "Sukces", f"Dodano produkt: {name.strip()}.")
+                QMessageBox.information(
+                    self, "Sukces", f"Dodano produkt: {name.strip()}."
+                )
                 self.load_data()
             except Exception as e:
                 print(f"[DEBUG] Błąd przy add_product: {e}")
@@ -197,7 +211,7 @@ class ProductsListScreen(BaseCrudListScreen):
             QMessageBox.information(
                 self,
                 "Skład",
-                f"Tu otworzymy ProductCompositionScreen dla product_id={product_id}"
+                f"Tu otworzymy ProductCompositionScreen dla product_id={product_id}",
             )
 
     def update_item_in_db(self, item_id: int, new_values: List[Any]) -> None:
@@ -212,9 +226,13 @@ class ProductsListScreen(BaseCrudListScreen):
         cat_id = new_values[1]
 
         try:
-            print(f"[DEBUG] update_product(item_id={item_id}, new_name='{new_name}', cat_id={cat_id})")
+            print(
+                f"[DEBUG] update_product(item_id={item_id}, new_name='{new_name}', cat_id={cat_id})"
+            )
             self.db_manager.update_product(item_id, new_name, cat_id)
-            QMessageBox.information(self, "Sukces", f"Zaktualizowano produkt (ID={item_id}).")
+            QMessageBox.information(
+                self, "Sukces", f"Zaktualizowano produkt (ID={item_id})."
+            )
             self.load_data()
         except Exception as e:
             print(f"[DEBUG] Błąd przy update_product: {e}")
@@ -231,7 +249,9 @@ class ProductsListScreen(BaseCrudListScreen):
         try:
             print(f"[DEBUG] db_manager.delete_product({item_id})")
             self.db_manager.delete_product(item_id)
-            QMessageBox.information(self, "Info", f"Produkt (ID={item_id}) został usunięty.")
+            QMessageBox.information(
+                self, "Info", f"Produkt (ID={item_id}) został usunięty."
+            )
             self.load_data()
         except Exception as e:
             print(f"[DEBUG] Błąd przy delete_product: {e}")

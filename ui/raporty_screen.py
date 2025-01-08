@@ -6,6 +6,7 @@ from PyQt5.QtCore import Qt
 
 from ui.background_screen import BackgroundScreen
 
+
 class RaportyScreen(BackgroundScreen):
     """
     Ekran 'Raporty', zawierający placeholder „Tutaj będą raporty”
@@ -16,7 +17,7 @@ class RaportyScreen(BackgroundScreen):
         super().__init__(
             parent=parent,
             bg_image_path=r"c:\serownia\images\cheese.jpg",  # Tło
-            panel_width=800
+            panel_width=800,
         )
         self.setWindowTitle("Raporty")
 
@@ -30,14 +31,16 @@ class RaportyScreen(BackgroundScreen):
 
         # Przycisk „Powrót”
         back_button = QPushButton("Powrót")
-        back_button.setStyleSheet("""
+        back_button.setStyleSheet(
+            """
             background-color: #FFCCCC;
             color: #800000;
             font-size: 24px;
             font-weight: bold;
             border-radius: 10px;
             padding: 15px;
-        """)
+        """
+        )
         back_button.clicked.connect(self.go_back_to_start)
         layout.addWidget(back_button)
 
@@ -49,7 +52,7 @@ class RaportyScreen(BackgroundScreen):
         Przycisk „Powrót” – wraca do ekranu startowego (start_screen) z MainWindow.
         """
         mw = self.window()  # Najpewniej MainWindow
-        if hasattr(mw, 'start_screen'):
+        if hasattr(mw, "start_screen"):
             mw.show_screen(mw.start_screen)
         else:
             # Fallback: chowamy to okno (lub cokolwiek innego)

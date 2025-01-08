@@ -36,13 +36,15 @@ class BaseScreen(QMainWindow):
         Styl i logikę obsługi możesz dostosować do własnych potrzeb.
         """
         back_button = QPushButton("Powrót")
-        back_button.setStyleSheet("""
+        back_button.setStyleSheet(
+            """
             padding: 15px;
             font-size: 14px;
             background-color: #FFCCCC;
             color: #800000;
             border-radius: 10px;
-        """)
+        """
+        )
 
         # Zamiast self.close() przełączamy się na inny ekran w QStackedWidget (o ile istnieje rodzic)
         back_button.clicked.connect(self.handle_back)
@@ -55,7 +57,9 @@ class BaseScreen(QMainWindow):
         """
         if self.parent is not None:
             # Przykład: powrót na ekran główny (start_screen)
-            if hasattr(self.parent, 'show_screen') and hasattr(self.parent, 'start_screen'):
+            if hasattr(self.parent, "show_screen") and hasattr(
+                self.parent, "start_screen"
+            ):
                 self.parent.show_screen(self.parent.start_screen)
             else:
                 # Jeśli nie istnieją atrybuty show_screen / start_screen, to zamknij okno

@@ -1,8 +1,15 @@
 from typing import Optional, Any, List
 
 from PyQt5.QtWidgets import (
-    QMainWindow, QVBoxLayout, QTableWidget, QTableWidgetItem,
-    QPushButton, QInputDialog, QMessageBox, QHBoxLayout, QWidget
+    QMainWindow,
+    QVBoxLayout,
+    QTableWidget,
+    QTableWidgetItem,
+    QPushButton,
+    QInputDialog,
+    QMessageBox,
+    QHBoxLayout,
+    QWidget,
 )
 from PyQt5.QtCore import Qt
 
@@ -16,7 +23,7 @@ class AdditiveCategoriesScreen(QMainWindow):
     def __init__(
         self,
         parent: Optional[QMainWindow] = None,
-        db_manager: Optional[Any] = None  # docelowo: Optional[DBManager]
+        db_manager: Optional[Any] = None,  # docelowo: Optional[DBManager]
     ) -> None:
         """
         Inicjalizuje ekran "Kategorie Dodatków", tworząc tabelę oraz przyciski
@@ -43,28 +50,34 @@ class AdditiveCategoriesScreen(QMainWindow):
         # Przyciski (dodanie kategorii, powrót)
         button_layout = QHBoxLayout()
         add_button = QPushButton("Dodaj kategorię")
-        add_button.setStyleSheet("""
+        add_button.setStyleSheet(
+            """
             background-color: #ADD8E6;
             color: #000080;
             font-size: 14px;
             font-weight: bold;
             border-radius: 10px;
             padding: 10px;
-        """)
+        """
+        )
         add_button.clicked.connect(self.add_category)
         button_layout.addWidget(add_button)
 
         back_button = QPushButton("Powrót")
-        back_button.setStyleSheet("""
+        back_button.setStyleSheet(
+            """
             background-color: #FFCCCC;
             color: #800000;
             font-size: 14px;
             font-weight: bold;
             border-radius: 10px;
             padding: 10px;
-        """)
+        """
+        )
         # Jeśli w MainWindow masz metodę show_screen i obiekt settings_screen, możesz tak przejść:
-        back_button.clicked.connect(lambda: self.parent.show_screen(self.parent.settings_screen))
+        back_button.clicked.connect(
+            lambda: self.parent.show_screen(self.parent.settings_screen)
+        )
         button_layout.addWidget(back_button)
 
         layout.addLayout(button_layout)
@@ -79,11 +92,15 @@ class AdditiveCategoriesScreen(QMainWindow):
         w tabeli. Usuwa istniejące wiersze, a następnie dodaje od nowa.
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można załadować kategorii.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można załadować kategorii."
+            )
             return
 
         self.category_table.setRowCount(0)
-        categories = self.db_manager.get_categories()  # lista słowników, np. [{"id": ..., "name": ...}, ...]
+        categories = (
+            self.db_manager.get_categories()
+        )  # lista słowników, np. [{"id": ..., "name": ...}, ...]
 
         for i, category in enumerate(categories):
             self.add_category_row(i + 1, category)
@@ -117,16 +134,19 @@ class AdditiveCategoriesScreen(QMainWindow):
         Po sukcesie odświeża tabelę.
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można dodać kategorii.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można dodać kategorii."
+            )
             return
 
-        name, ok = QInputDialog.getText(self, "Dodaj kategorię", "Nazwa nowej kategorii:")
+        name, ok = QInputDialog.getText(
+            self, "Dodaj kategorię", "Nazwa nowej kategorii:"
+        )
         if ok and name.strip():
             try:
                 self.db_manager.add_category(name.strip())
                 QMessageBox.information(
-                    self, "Sukces",
-                    f"Kategoria '{name.strip()}' została dodana."
+                    self, "Sukces", f"Kategoria '{name.strip()}' została dodana."
                 )
                 self.load_categories()
             except Exception as e:

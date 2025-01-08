@@ -2,6 +2,7 @@ import sqlite3
 import os
 from typing import Optional, List, Dict, Any
 
+
 class DBManager:
     """
     Klasa odpowiedzialna za zarządzanie bazą danych (SQLite).
@@ -47,32 +48,39 @@ class DBManager:
             cursor = conn.cursor()
             try:
                 # -------------------- Użytkownicy --------------------
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         username TEXT NOT NULL UNIQUE,
                         password TEXT NOT NULL
                     )
-                """)
+                """
+                )
 
                 # -------------------- Kategorie Dodatków (do additives) --------------------
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS categories (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT NOT NULL UNIQUE
                     )
-                """)
+                """
+                )
 
                 # -------------------- Kategorie Produktów (do products) --------------------
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS product_categories (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT NOT NULL UNIQUE
                     )
-                """)
+                """
+                )
 
                 # -------------------- Dodatki --------------------
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS additives (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT NOT NULL,
@@ -81,10 +89,12 @@ class DBManager:
                         category_id INTEGER,
                         FOREIGN KEY (category_id) REFERENCES categories(id)
                     )
-                """)
+                """
+                )
 
                 # -------------------- Produkty --------------------
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS products (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT NOT NULL,
@@ -93,10 +103,12 @@ class DBManager:
                         stock TEXT,
                         FOREIGN KEY (category_id) REFERENCES product_categories(id)
                     )
-                """)
+                """
+                )
 
                 # -------------------- Tabela product_additives (relacja produkt - dodatek) --------------------
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS product_additives (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         product_id INTEGER NOT NULL,
@@ -105,18 +117,22 @@ class DBManager:
                         FOREIGN KEY (product_id) REFERENCES products(id),
                         FOREIGN KEY (additive_id) REFERENCES additives(id)
                     )
-                """)
+                """
+                )
 
                 # -------------------- Kategorie Opakowań --------------------
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS packaging_categories (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT NOT NULL UNIQUE
                     )
-                """)
+                """
+                )
 
                 # -------------------- Opakowania --------------------
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS packaging (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT NOT NULL,
@@ -125,10 +141,12 @@ class DBManager:
                         packaging_category_id INTEGER,
                         FOREIGN KEY (packaging_category_id) REFERENCES packaging_categories(id)
                     )
-                """)
+                """
+                )
 
                 # -------------------- Rejestr Dodatków --------------------
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS additives_register (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         date TEXT,
@@ -136,10 +154,12 @@ class DBManager:
                         additive_id INTEGER,
                         FOREIGN KEY (additive_id) REFERENCES additives(id)
                     )
-                """)
+                """
+                )
 
                 # -------------------- Rejestr Opakowań --------------------
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS packaging_register (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         date TEXT,
@@ -147,10 +167,12 @@ class DBManager:
                         packaging_id INTEGER,
                         FOREIGN KEY (packaging_id) REFERENCES packaging(id)
                     )
-                """)
+                """
+                )
 
                 # -------------------- Tabela production_records --------------------
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS production_records (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         date TEXT NOT NULL,
@@ -158,7 +180,8 @@ class DBManager:
                         product_id INTEGER,
                         FOREIGN KEY (product_id) REFERENCES products(id)
                     )
-                """)
+                """
+                )
 
                 # -------------------- ser_production_details --------------------
                 #
@@ -169,7 +192,8 @@ class DBManager:
                 #   były do tej pory, plus nowo wstawione (serwatka_plus, woda_minus,
                 #   temp_poczatkowa, temp_koncowa).
                 #
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS ser_production_details (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         production_record_id INTEGER NOT NULL,
@@ -187,7 +211,8 @@ class DBManager:
                         temp_koncowa TEXT,
                         FOREIGN KEY (production_record_id) REFERENCES production_records(id)
                     )
-                """)
+                """
+                )
 
                 # -------------------- ser_production_additives --------------------
                 #
@@ -195,7 +220,8 @@ class DBManager:
                 # (powiązane z production_record_id), 3 kolumny: kategoria, nazwa, dawka
                 # – i usunięta kolumna time_added (nie chcemy jej).
                 #
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS ser_production_additives (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         production_record_id INTEGER NOT NULL,
@@ -204,7 +230,8 @@ class DBManager:
                         dose_calculated TEXT,
                         FOREIGN KEY (production_record_id) REFERENCES production_records(id)
                     )
-                """)
+                """
+                )
 
                 # --- Dane startowe: kategorie dodatków (tabela categories) ---
                 initial_categories = [
@@ -213,12 +240,12 @@ class DBManager:
                     "Lizozym",
                     "Chlorek wapnia",
                     "Przyprawy",
-                    "Proszki"
+                    "Proszki",
                 ]
                 for category in initial_categories:
                     cursor.execute(
                         "INSERT OR IGNORE INTO categories (name) VALUES (?)",
-                        (category,)
+                        (category,),
                     )
 
                 # --- Dane startowe: kategorie produktów (tabela product_categories) ---
@@ -230,12 +257,12 @@ class DBManager:
                     "Mleko",
                     "Serwatka",
                     "Lody",
-                    "Inne"
+                    "Inne",
                 ]
                 for cat_name in initial_product_categories:
                     cursor.execute(
                         "INSERT OR IGNORE INTO product_categories (name) VALUES (?)",
-                        (cat_name,)
+                        (cat_name,),
                     )
 
                 # --- Dane startowe: kategorie opakowań (tabela packaging_categories) ---
@@ -244,12 +271,12 @@ class DBManager:
                     "Worki",
                     "Pudełka",
                     "Papier",
-                    "Inne"
+                    "Inne",
                 ]
                 for pcat_name in initial_packaging_categories:
                     cursor.execute(
                         "INSERT OR IGNORE INTO packaging_categories (name) VALUES (?)",
-                        (pcat_name,)
+                        (pcat_name,),
                     )
 
                 conn.commit()
@@ -265,10 +292,13 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO users (username, password)
                     VALUES (?, ?)
-                """, (username, password))
+                """,
+                    (username, password),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy dodawaniu użytkownika: {e}")
@@ -277,10 +307,13 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT id FROM users
                     WHERE username=? AND password=?
-                """, (username, password))
+                """,
+                    (username, password),
+                )
                 row = cursor.fetchone()
                 return row is not None
         except sqlite3.Error as e:
@@ -291,11 +324,14 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT id, username, password
                     FROM users
                     WHERE username=?
-                """, (username,))
+                """,
+                    (username,),
+                )
                 row = cursor.fetchone()
                 if row:
                     return {"id": row[0], "username": row[1], "password": row[2]}
@@ -308,11 +344,14 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE users
                     SET password=?
                     WHERE username=?
-                """, (new_password, username))
+                """,
+                    (new_password, username),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy aktualizacji hasła użytkownika: {e}")
@@ -345,9 +384,12 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO categories (name) VALUES (?)
-                """, (name,))
+                """,
+                    (name,),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy dodawaniu kategorii: {e}")
@@ -356,11 +398,14 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE categories
                     SET name=?
                     WHERE id=?
-                """, (new_name, category_id))
+                """,
+                    (new_name, category_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy aktualizacji kategorii: {e}")
@@ -381,33 +426,42 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT id, name, weight, dosage, category_id
                     FROM additives
-                """)
+                """
+                )
                 rows = cursor.fetchall()
                 result: List[Dict[str, Any]] = []
                 for row in rows:
-                    result.append({
-                        "id": row[0],
-                        "name": row[1],
-                        "weight": row[2],
-                        "dosage": row[3],
-                        "category_id": row[4],
-                    })
+                    result.append(
+                        {
+                            "id": row[0],
+                            "name": row[1],
+                            "weight": row[2],
+                            "dosage": row[3],
+                            "category_id": row[4],
+                        }
+                    )
                 return result
         except sqlite3.Error as e:
             print(f"Błąd przy pobieraniu dodatków: {e}")
             return []
 
-    def add_additive(self, name: str, weight: str, dosage: str, category_id: int) -> None:
+    def add_additive(
+        self, name: str, weight: str, dosage: str, category_id: int
+    ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO additives (name, weight, dosage, category_id)
                     VALUES (?, ?, ?, ?)
-                """, (name, weight, dosage, category_id))
+                """,
+                    (name, weight, dosage, category_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy dodawaniu dodatku: {e}")
@@ -421,15 +475,20 @@ class DBManager:
         except sqlite3.Error as e:
             print(f"Błąd przy usuwaniu dodatku: {e}")
 
-    def update_additive(self, additive_id: int, name: str, weight: str, dosage: str, category_id: int) -> None:
+    def update_additive(
+        self, additive_id: int, name: str, weight: str, dosage: str, category_id: int
+    ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE additives
                     SET name=?, weight=?, dosage=?, category_id=?
                     WHERE id=?
-                """, (name, weight, dosage, category_id, additive_id))
+                """,
+                    (name, weight, dosage, category_id, additive_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy aktualizacji dodatku: {e}")
@@ -452,9 +511,12 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO product_categories (name) VALUES (?)
-                """, (name,))
+                """,
+                    (name,),
+                )
                 conn.commit()
         except sqlite3.IntegrityError:
             print(f"[WARN] Próba dodania zduplikowanej kategorii produktu: '{name}'")
@@ -466,11 +528,14 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE product_categories
                     SET name=?
                     WHERE id=?
-                """, (new_name, category_id))
+                """,
+                    (new_name, category_id),
+                )
                 conn.commit()
         except sqlite3.IntegrityError:
             print(f"[WARN] Próba zmiany nazwy kategorii na zduplikowaną: '{new_name}'")
@@ -482,7 +547,9 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("DELETE FROM product_categories WHERE id=?", (category_id,))
+                cursor.execute(
+                    "DELETE FROM product_categories WHERE id=?", (category_id,)
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy usuwaniu kategorii produktu: {e}")
@@ -494,20 +561,24 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT id, name, category_id, price, stock
                     FROM products
-                """)
+                """
+                )
                 rows = cursor.fetchall()
                 result: List[Dict[str, Any]] = []
                 for row in rows:
-                    result.append({
-                        "id": row[0],
-                        "name": row[1],
-                        "category_id": row[2],
-                        "price": row[3],
-                        "stock": row[4]
-                    })
+                    result.append(
+                        {
+                            "id": row[0],
+                            "name": row[1],
+                            "category_id": row[2],
+                            "price": row[3],
+                            "stock": row[4],
+                        }
+                    )
                 return result
         except sqlite3.Error as e:
             print(f"Błąd przy pobieraniu produktów: {e}")
@@ -518,15 +589,23 @@ class DBManager:
         name: str,
         category_id: int,
         price: Optional[str] = None,
-        stock: Optional[str] = None
+        stock: Optional[str] = None,
     ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO products (name, category_id, price, stock)
                     VALUES (?, ?, ?, ?)
-                """, (name, category_id, price if price else None, stock if stock else None))
+                """,
+                    (
+                        name,
+                        category_id,
+                        price if price else None,
+                        stock if stock else None,
+                    ),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy dodawaniu produktu: {e}")
@@ -537,22 +616,25 @@ class DBManager:
         new_name: str,
         new_category_id: int,
         new_price: Optional[str] = None,
-        new_stock: Optional[str] = None
+        new_stock: Optional[str] = None,
     ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE products
                     SET name = ?, category_id = ?, price = ?, stock = ?
                     WHERE id = ?
-                """, (
-                    new_name,
-                    new_category_id,
-                    new_price if new_price else None,
-                    new_stock if new_stock else None,
-                    product_id
-                ))
+                """,
+                    (
+                        new_name,
+                        new_category_id,
+                        new_price if new_price else None,
+                        new_stock if new_stock else None,
+                        product_id,
+                    ),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy aktualizacji produktu: {e}")
@@ -578,20 +660,25 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT id, product_id, additive_id, dosage_per_100
                     FROM product_additives
                     WHERE product_id = ?
-                """, (product_id,))
+                """,
+                    (product_id,),
+                )
                 rows = cursor.fetchall()
                 result: List[Dict[str, Any]] = []
                 for row in rows:
-                    result.append({
-                        "id": row[0],
-                        "product_id": row[1],
-                        "additive_id": row[2],
-                        "dosage_per_100": row[3]
-                    })
+                    result.append(
+                        {
+                            "id": row[0],
+                            "product_id": row[1],
+                            "additive_id": row[2],
+                            "dosage_per_100": row[3],
+                        }
+                    )
                 return result
         except sqlite3.Error as e:
             print(f"Błąd przy pobieraniu relacji product_additives: {e}")
@@ -601,7 +688,8 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT pa.id,
                            pa.product_id,
                            pa.dosage_per_100,
@@ -611,31 +699,40 @@ class DBManager:
                       FROM product_additives pa
                       JOIN additives a ON pa.additive_id = a.id
                      WHERE pa.product_id = ?
-                """, (product_id,))
+                """,
+                    (product_id,),
+                )
                 rows = cursor.fetchall()
                 result: List[Dict[str, Any]] = []
                 for row in rows:
-                    result.append({
-                        "id": row[0],
-                        "product_id": row[1],
-                        "dosage_per_100": row[2],
-                        "additive_id": row[3],
-                        "additive_name": row[4],
-                        "category_id": row[5]
-                    })
+                    result.append(
+                        {
+                            "id": row[0],
+                            "product_id": row[1],
+                            "dosage_per_100": row[2],
+                            "additive_id": row[3],
+                            "additive_name": row[4],
+                            "category_id": row[5],
+                        }
+                    )
                 return result
         except sqlite3.Error as e:
             print(f"Błąd przy pobieraniu relacji product_additives (JOIN): {e}")
             return []
 
-    def add_product_additive(self, product_id: int, additive_id: int, dosage_per_100: str) -> None:
+    def add_product_additive(
+        self, product_id: int, additive_id: int, dosage_per_100: str
+    ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO product_additives (product_id, additive_id, dosage_per_100)
                     VALUES (?, ?, ?)
-                """, (product_id, additive_id, dosage_per_100))
+                """,
+                    (product_id, additive_id, dosage_per_100),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy dodawaniu wpisu w product_additives: {e}")
@@ -644,11 +741,14 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE product_additives
                     SET dosage_per_100 = ?
                     WHERE id = ?
-                """, (new_dosage, pa_id))
+                """,
+                    (new_dosage, pa_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy aktualizacji wpisu w product_additives: {e}")
@@ -662,15 +762,20 @@ class DBManager:
         except sqlite3.Error as e:
             print(f"Błąd przy usuwaniu wpisu w product_additives: {e}")
 
-    def update_product_additive_full(self, pa_id: int, new_additive_id: int, new_dosage: str) -> None:
+    def update_product_additive_full(
+        self, pa_id: int, new_additive_id: int, new_dosage: str
+    ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE product_additives
                     SET additive_id = ?, dosage_per_100 = ?
                     WHERE id = ?
-                """, (new_additive_id, new_dosage, pa_id))
+                """,
+                    (new_additive_id, new_dosage, pa_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy aktualizacji product_additives (pa_id={pa_id}): {e}")
@@ -693,9 +798,12 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO packaging_categories (name) VALUES (?)
-                """, (name,))
+                """,
+                    (name,),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy dodawaniu kategorii opakowania: {e}")
@@ -704,11 +812,14 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE packaging_categories
                     SET name=?
                     WHERE id=?
-                """, (new_name, category_id))
+                """,
+                    (new_name, category_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy aktualizacji kategorii opakowania: {e}")
@@ -717,7 +828,9 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("DELETE FROM packaging_categories WHERE id=?", (category_id,))
+                cursor.execute(
+                    "DELETE FROM packaging_categories WHERE id=?", (category_id,)
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy usuwaniu kategorii opakowania: {e}")
@@ -729,46 +842,60 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT id, name, quantity, date, packaging_category_id
                     FROM packaging
-                """)
+                """
+                )
                 rows = cursor.fetchall()
                 result: List[Dict[str, Any]] = []
                 for row in rows:
-                    result.append({
-                        "id": row[0],
-                        "name": row[1],
-                        "quantity": row[2],
-                        "date": row[3],
-                        "packaging_category_id": row[4]
-                    })
+                    result.append(
+                        {
+                            "id": row[0],
+                            "name": row[1],
+                            "quantity": row[2],
+                            "date": row[3],
+                            "packaging_category_id": row[4],
+                        }
+                    )
                 return result
         except sqlite3.Error as e:
             print(f"Błąd przy pobieraniu opakowań: {e}")
             return []
 
-    def add_packaging(self, name: str, quantity: str, date: str, packaging_category_id: int) -> None:
+    def add_packaging(
+        self, name: str, quantity: str, date: str, packaging_category_id: int
+    ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO packaging (name, quantity, date, packaging_category_id)
                     VALUES (?, ?, ?, ?)
-                """, (name, quantity, date, packaging_category_id))
+                """,
+                    (name, quantity, date, packaging_category_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy dodawaniu opakowania: {e}")
 
-    def update_packaging(self, packaging_id: int, name: str, quantity: str, date: str, category_id: int) -> None:
+    def update_packaging(
+        self, packaging_id: int, name: str, quantity: str, date: str, category_id: int
+    ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE packaging
                     SET name=?, quantity=?, date=?, packaging_category_id=?
                     WHERE id=?
-                """, (name, quantity, date, category_id, packaging_id))
+                """,
+                    (name, quantity, date, category_id, packaging_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy aktualizacji opakowania: {e}")
@@ -785,14 +912,19 @@ class DBManager:
     # ----------------------------------------------------------------
     # -------------------- REJESTR OPAKOWAŃ --------------------------
     # ----------------------------------------------------------------
-    def add_packaging_register(self, date: str, quantity: str, packaging_id: int) -> None:
+    def add_packaging_register(
+        self, date: str, quantity: str, packaging_id: int
+    ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO packaging_register (date, quantity, packaging_id)
                     VALUES (?, ?, ?)
-                """, (date, quantity, packaging_id))
+                """,
+                    (date, quantity, packaging_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy dodawaniu do rejestru opakowań: {e}")
@@ -801,35 +933,44 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT pr.id, pr.date, pr.quantity, pr.packaging_id, p.name
                     FROM packaging_register pr
                     LEFT JOIN packaging p ON pr.packaging_id = p.id
-                """)
+                """
+                )
                 rows = cursor.fetchall()
                 result: List[Dict[str, Any]] = []
                 for row in rows:
-                    result.append({
-                        "id": row[0],
-                        "date": row[1],
-                        "quantity": row[2],
-                        "packaging_id": row[3],
-                        "packaging_name": row[4]
-                    })
+                    result.append(
+                        {
+                            "id": row[0],
+                            "date": row[1],
+                            "quantity": row[2],
+                            "packaging_id": row[3],
+                            "packaging_name": row[4],
+                        }
+                    )
                 return result
         except sqlite3.Error as e:
             print(f"Błąd przy pobieraniu rejestru opakowań: {e}")
             return []
 
-    def update_packaging_register(self, register_id: int, date_str: str, quantity_str: str, packaging_id: int) -> None:
+    def update_packaging_register(
+        self, register_id: int, date_str: str, quantity_str: str, packaging_id: int
+    ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE packaging_register
                     SET date=?, quantity=?, packaging_id=?
                     WHERE id=?
-                """, (date_str, quantity_str, packaging_id, register_id))
+                """,
+                    (date_str, quantity_str, packaging_id, register_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy aktualizacji rejestru opakowań: {e}")
@@ -838,7 +979,9 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("DELETE FROM packaging_register WHERE id=?", (register_id,))
+                cursor.execute(
+                    "DELETE FROM packaging_register WHERE id=?", (register_id,)
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy usuwaniu z rejestru opakowań: {e}")
@@ -846,14 +989,19 @@ class DBManager:
     # ----------------------------------------------------------------
     # -------------------- REJESTR DODATKÓW --------------------------
     # ----------------------------------------------------------------
-    def add_additive_register(self, date_str: str, quantity_str: str, additive_id: int) -> None:
+    def add_additive_register(
+        self, date_str: str, quantity_str: str, additive_id: int
+    ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO additives_register (date, quantity, additive_id)
                     VALUES (?, ?, ?)
-                """, (date_str, quantity_str, additive_id))
+                """,
+                    (date_str, quantity_str, additive_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy dodawaniu do rejestru dodatków: {e}")
@@ -862,35 +1010,44 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT ar.id, ar.date, ar.quantity, ar.additive_id, a.name
                     FROM additives_register ar
                     LEFT JOIN additives a ON ar.additive_id = a.id
-                """)
+                """
+                )
                 rows = cursor.fetchall()
                 result: List[Dict[str, Any]] = []
                 for row in rows:
-                    result.append({
-                        "id": row[0],
-                        "date": row[1],
-                        "quantity": row[2],
-                        "additive_id": row[3],
-                        "additive_name": row[4]
-                    })
+                    result.append(
+                        {
+                            "id": row[0],
+                            "date": row[1],
+                            "quantity": row[2],
+                            "additive_id": row[3],
+                            "additive_name": row[4],
+                        }
+                    )
                 return result
         except sqlite3.Error as e:
             print(f"Błąd przy pobieraniu rejestru dodatków: {e}")
             return []
 
-    def update_additive_register(self, register_id: int, new_date: str, new_quantity: str, additive_id: int) -> None:
+    def update_additive_register(
+        self, register_id: int, new_date: str, new_quantity: str, additive_id: int
+    ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE additives_register
                     SET date=?, quantity=?, additive_id=?
                     WHERE id=?
-                """, (new_date, new_quantity, additive_id, register_id))
+                """,
+                    (new_date, new_quantity, additive_id, register_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy aktualizacji rejestru dodatków: {e}")
@@ -899,7 +1056,9 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("DELETE FROM additives_register WHERE id=?", (register_id,))
+                cursor.execute(
+                    "DELETE FROM additives_register WHERE id=?", (register_id,)
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy usuwaniu z rejestru dodatków: {e}")
@@ -915,11 +1074,14 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT id, name, weight, dosage, category_id
                     FROM additives
                     WHERE id = ?
-                """, (additive_id,))
+                """,
+                    (additive_id,),
+                )
                 row = cursor.fetchone()
                 if row:
                     return {
@@ -937,31 +1099,43 @@ class DBManager:
     # ----------------------------------------------------------------
     # ----------- Metody do obsługi PRODUCTION_RECORDS --------------
     # ----------------------------------------------------------------
-    def add_production_record(self, date_str: str, series_str: str, product_id: int) -> None:
+    def add_production_record(
+        self, date_str: str, series_str: str, product_id: int
+    ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO production_records (date, series, product_id)
                     VALUES (?, ?, ?)
-                """, (date_str, series_str, product_id))
+                """,
+                    (date_str, series_str, product_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy dodawaniu rekordu w production_records: {e}")
             raise
 
-    def add_production_record_returning_id(self, date_str: str, series_str: str, product_id: int) -> int:
+    def add_production_record_returning_id(
+        self, date_str: str, series_str: str, product_id: int
+    ) -> int:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO production_records (date, series, product_id)
                     VALUES (?, ?, ?)
-                """, (date_str, series_str, product_id))
+                """,
+                    (date_str, series_str, product_id),
+                )
                 conn.commit()
                 return cursor.lastrowid
         except sqlite3.Error as e:
-            print(f"Błąd przy dodawaniu rekordu w production_records (returning id): {e}")
+            print(
+                f"Błąd przy dodawaniu rekordu w production_records (returning id): {e}"
+            )
             raise
 
     def get_production_count_for_month(self, month: int, full_year: int) -> int:
@@ -990,22 +1164,21 @@ class DBManager:
             return 0
 
     def update_production_record(
-        self,
-        record_id: int,
-        new_date: str,
-        new_series: str,
-        new_product_id: int
+        self, record_id: int, new_date: str, new_series: str, new_product_id: int
     ) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE production_records
                     SET date = ?,
                         series = ?,
                         product_id = ?
                     WHERE id = ?
-                """, (new_date, new_series, new_product_id, record_id))
+                """,
+                    (new_date, new_series, new_product_id, record_id),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy aktualizacji production_records (id={record_id}): {e}")
@@ -1029,7 +1202,7 @@ class DBManager:
         serwatka_plus: str,
         woda_minus: str,
         temp_poczatkowa: str,
-        temp_koncowa: str
+        temp_koncowa: str,
     ) -> None:
         """
         Dodaje nowy wiersz do tabeli ser_production_details.
@@ -1086,8 +1259,8 @@ class DBManager:
                     formy_ilosc,
                     solenie_start,
                     solenie_end,
-                    pasteryzacja
-                )
+                    pasteryzacja,
+                ),
             )
             conn.commit()
 
@@ -1102,7 +1275,8 @@ class DBManager:
                 cursor = conn.cursor()
                 # Upewnij się, że SELECT uwzględnia *wszystkie* kolumny w tabeli
                 # (poza 'id', jeśli chcesz) w tej samej kolejności, co w DB:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT
                         id,
                         production_record_id,
@@ -1129,34 +1303,36 @@ class DBManager:
                         pasteryzacja
                     FROM ser_production_details
                     WHERE production_record_id = ?
-                """, (production_record_id,))
+                """,
+                    (production_record_id,),
+                )
 
                 row = cursor.fetchone()
                 if row:
                     return {
-                        "id":                         row[0],
-                        "production_record_id":       row[1],
-                        "milk_amount":                row[2],
-                        "ph":                         row[3],
-                        "dodanie_kultur_start":       row[4],
-                        "dodanie_kultur_end":         row[5],
-                        "podpuszczka_start":          row[6],
-                        "podpuszczka_end":            row[7],
-                        "krojenie_start":             row[8],
-                        "krojenie_end":               row[9],
-                        "serwatka_start":             row[10],
-                        "serwatka_end":               row[11],
-                        "dogrzewanie_start":          row[12],
-                        "dogrzewanie_end":            row[13],
-                        "dosuszanie_start":           row[14],
-                        "dosuszanie_end":             row[15],
-                        "wstepne_prasowanie_start":   row[16],
-                        "wstepne_prasowanie_end":     row[17],
-                        "formy_wielkosc":             row[18],
-                        "formy_ilosc":                row[19],
-                        "solenie_start":              row[20],
-                        "solenie_end":                row[21],
-                        "pasteryzacja":               row[22],
+                        "id": row[0],
+                        "production_record_id": row[1],
+                        "milk_amount": row[2],
+                        "ph": row[3],
+                        "dodanie_kultur_start": row[4],
+                        "dodanie_kultur_end": row[5],
+                        "podpuszczka_start": row[6],
+                        "podpuszczka_end": row[7],
+                        "krojenie_start": row[8],
+                        "krojenie_end": row[9],
+                        "serwatka_start": row[10],
+                        "serwatka_end": row[11],
+                        "dogrzewanie_start": row[12],
+                        "dogrzewanie_end": row[13],
+                        "dosuszanie_start": row[14],
+                        "dosuszanie_end": row[15],
+                        "wstepne_prasowanie_start": row[16],
+                        "wstepne_prasowanie_end": row[17],
+                        "formy_wielkosc": row[18],
+                        "formy_ilosc": row[19],
+                        "solenie_start": row[20],
+                        "solenie_end": row[21],
+                        "pasteryzacja": row[22],
                     }
                 else:
                     return {}
@@ -1164,15 +1340,17 @@ class DBManager:
             print(f"Błąd przy pobieraniu ser_production_details: {e}")
             return {}
 
-
     def delete_ser_production_details(self, production_record_id: int) -> None:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     DELETE FROM ser_production_details
                     WHERE production_record_id = ?
-                """, (production_record_id,))
+                """,
+                    (production_record_id,),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Błąd przy usuwaniu ser_production_details: {e}")
@@ -1220,7 +1398,9 @@ class DBManager:
         """
         with self.create_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT id, name, category_id FROM products WHERE id = ?", (product_id,))
+            cursor.execute(
+                "SELECT id, name, category_id FROM products WHERE id = ?", (product_id,)
+            )
             row = cursor.fetchone()
             if row:
                 return {"id": row[0], "name": row[1], "category_id": row[2]}
@@ -1238,10 +1418,13 @@ class DBManager:
         """
         with self.create_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 DELETE FROM ser_production_additives
                 WHERE production_record_id = ?
-            """, (record_id,))
+            """,
+                (record_id,),
+            )
             conn.commit()
 
     def add_ser_production_additive(
@@ -1249,7 +1432,7 @@ class DBManager:
         production_record_id: int,
         cat_name: str,
         add_name: str,
-        dose_str: str
+        dose_str: str,
         # usunięto time_str
     ) -> None:
         """
@@ -1258,7 +1441,8 @@ class DBManager:
         """
         with self.create_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO ser_production_additives (
                     production_record_id,
                     additive_category,
@@ -1266,8 +1450,11 @@ class DBManager:
                     dose_calculated
                 )
                 VALUES (?, ?, ?, ?)
-            """, (production_record_id, cat_name, add_name, dose_str))
+            """,
+                (production_record_id, cat_name, add_name, dose_str),
+            )
             conn.commit()
+
     def add_ser_production_details_extended(
         self,
         production_record_id: int,
@@ -1291,7 +1478,7 @@ class DBManager:
         formy_wielkosc: str,
         formy_ilosc: str,
         solenie_start: str,
-        solenie_end: str
+        solenie_end: str,
     ) -> None:
         """
         Wstawia nowy wiersz do ser_production_details z pełnym zestawem pól,
@@ -1349,17 +1536,13 @@ class DBManager:
                     formy_ilosc,
                     solenie_start,
                     solenie_end,
-                    pasteryzacja
-                )
+                    pasteryzacja,
+                ),
             )
             conn.commit()
 
     def add_ser_production_additive_3col(
-        self,
-        production_record_id: int,
-        cat_name: str,
-        add_name: str,
-        dose_str: str
+        self, production_record_id: int, cat_name: str, add_name: str, dose_str: str
     ) -> None:
         """
         Wstawia nowy wiersz do ser_production_additives z 3 kolumnami:
@@ -1370,7 +1553,8 @@ class DBManager:
         """
         with self.create_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO ser_production_additives (
                     production_record_id,
                     additive_category,
@@ -1378,7 +1562,9 @@ class DBManager:
                     dose_calculated
                 )
                 VALUES (?, ?, ?, ?)
-            """, (production_record_id, cat_name, add_name, dose_str))
+            """,
+                (production_record_id, cat_name, add_name, dose_str),
+            )
             conn.commit()
 
     def update_ser_production_details_extended(
@@ -1404,7 +1590,7 @@ class DBManager:
         formy_wielkosc: str,
         formy_ilosc: str,
         solenie_start: str,
-        solenie_end: str
+        solenie_end: str,
     ) -> None:
         """
         Aktualizuje istniejący wiersz w ser_production_details (zidentyfikowany
@@ -1461,11 +1647,10 @@ class DBManager:
                     formy_ilosc,
                     solenie_start,
                     solenie_end,
-                    production_record_id  # warunek w WHERE
-                )
+                    production_record_id,  # warunek w WHERE
+                ),
             )
             conn.commit()
-
 
     def add_fermented_production_details(
         self,
@@ -1481,11 +1666,12 @@ class DBManager:
         ink_temp: str,
         ink_czas: str,
         chl_godz: str,
-        chl_temp_end: str
+        chl_temp_end: str,
     ) -> None:
         with self.create_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO fermented_production_details (
                     production_record_id,
                     milk_type,
@@ -1502,21 +1688,23 @@ class DBManager:
                     chl_temp_end
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                production_record_id,
-                milk_type,
-                amt,
-                ph,
-                pasteryzacja,
-                dod_kultur_godz,
-                dod_kultur_czas,
-                rozl_start,
-                rozl_end,
-                ink_temp,
-                ink_czas,
-                chl_godz,
-                chl_temp_end
-            ))
+            """,
+                (
+                    production_record_id,
+                    milk_type,
+                    amt,
+                    ph,
+                    pasteryzacja,
+                    dod_kultur_godz,
+                    dod_kultur_czas,
+                    rozl_start,
+                    rozl_end,
+                    ink_temp,
+                    ink_czas,
+                    chl_godz,
+                    chl_temp_end,
+                ),
+            )
             conn.commit()
 
     def update_fermented_production_details(
@@ -1533,11 +1721,12 @@ class DBManager:
         ink_temp: str,
         ink_czas: str,
         chl_godz: str,
-        chl_temp_end: str
+        chl_temp_end: str,
     ) -> None:
         with self.create_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 UPDATE fermented_production_details
                 SET
                     milk_type = ?,
@@ -1553,31 +1742,36 @@ class DBManager:
                     chl_godz = ?,
                     chl_temp_end = ?
                 WHERE production_record_id = ?
-            """, (
-                milk_type,
-                amt,
-                ph,
-                pasteryzacja,
-                dod_kultur_godz,
-                dod_kultur_czas,
-                rozl_start,
-                rozl_end,
-                ink_temp,
-                ink_czas,
-                chl_godz,
-                chl_temp_end,
-                production_record_id
-            ))
+            """,
+                (
+                    milk_type,
+                    amt,
+                    ph,
+                    pasteryzacja,
+                    dod_kultur_godz,
+                    dod_kultur_czas,
+                    rozl_start,
+                    rozl_end,
+                    ink_temp,
+                    ink_czas,
+                    chl_godz,
+                    chl_temp_end,
+                    production_record_id,
+                ),
+            )
             conn.commit()
 
-    def get_fermented_production_details(self, production_record_id: int) -> Dict[str, Any]:
+    def get_fermented_production_details(
+        self, production_record_id: int
+    ) -> Dict[str, Any]:
         """
         Pobiera szczegóły z tabeli fermented_production_details
         dla danego production_record_id.
         """
         with self.create_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT
                     id,
                     production_record_id,
@@ -1595,7 +1789,9 @@ class DBManager:
                     chl_temp_end
                 FROM fermented_production_details
                 WHERE production_record_id = ?
-            """, (production_record_id,))
+            """,
+                (production_record_id,),
+            )
 
             row = cursor.fetchone()
             if row:
@@ -1613,10 +1809,11 @@ class DBManager:
                     "ink_temp": row[10],
                     "ink_czas": row[11],
                     "chl_godz": row[12],
-                    "chl_temp_end": row[13]
+                    "chl_temp_end": row[13],
                 }
             else:
                 return {}
+
     # -------------- TWAROG (CRUD) --------------
     def add_twarog_production_details(
         self,
@@ -1632,14 +1829,15 @@ class DBManager:
         formy_wielkosc: str,
         formy_ilosc: str,
         solenie_start: str,
-        solenie_end: str
+        solenie_end: str,
     ) -> None:
         """
         Dodaje nowy wiersz do tabeli twarog_production_details.
         """
         with self.create_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO twarog_production_details (
                     production_record_id,
                     milk_type,       
@@ -1656,23 +1854,24 @@ class DBManager:
                     solenie_end
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                production_record_id,
-                milk_type,
-                milk_amount,
-                ph,
-                pasteryzacja,
-                krojenie_start,
-                krojenie_end,
-                dogrzewanie_start,
-                dogrzewanie_end,
-                formy_wielkosc,
-                formy_ilosc,
-                solenie_start,
-                solenie_end
-            ))
+            """,
+                (
+                    production_record_id,
+                    milk_type,
+                    milk_amount,
+                    ph,
+                    pasteryzacja,
+                    krojenie_start,
+                    krojenie_end,
+                    dogrzewanie_start,
+                    dogrzewanie_end,
+                    formy_wielkosc,
+                    formy_ilosc,
+                    solenie_start,
+                    solenie_end,
+                ),
+            )
             conn.commit()
-
 
     def get_twarog_production_details(self, production_record_id: int) -> dict:
         """
@@ -1683,7 +1882,8 @@ class DBManager:
         try:
             with self.create_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT
                         id,
                         production_record_id,
@@ -1701,31 +1901,32 @@ class DBManager:
                         solenie_end
                     FROM twarog_production_details
                     WHERE production_record_id = ?
-                """, (production_record_id,))
+                """,
+                    (production_record_id,),
+                )
                 row = cursor.fetchone()
                 if row:
                     return {
-                        "id":                  row[0],
+                        "id": row[0],
                         "production_record_id": row[1],
-                        "milk_type":            row[2],
-                        "milk_amount":         row[3],
-                        "ph":                  row[4],
-                        "pasteryzacja":        row[5],
-                        "krojenie_start":      row[6],
-                        "krojenie_end":        row[7],
-                        "dogrzewanie_start":   row[8],
-                        "dogrzewanie_end":     row[9],
-                        "formy_wielkosc":      row[10],
-                        "formy_ilosc":         row[11],
-                        "solenie_start":       row[12],
-                        "solenie_end":         row[13],
+                        "milk_type": row[2],
+                        "milk_amount": row[3],
+                        "ph": row[4],
+                        "pasteryzacja": row[5],
+                        "krojenie_start": row[6],
+                        "krojenie_end": row[7],
+                        "dogrzewanie_start": row[8],
+                        "dogrzewanie_end": row[9],
+                        "formy_wielkosc": row[10],
+                        "formy_ilosc": row[11],
+                        "solenie_start": row[12],
+                        "solenie_end": row[13],
                     }
                 else:
                     return {}
         except Exception as e:
             print(f"[DBManager] Błąd w get_twarog_production_details: {e}")
             return {}
-
 
     def update_twarog_production_details(
         self,
@@ -1741,7 +1942,7 @@ class DBManager:
         formy_wielkosc: str,
         formy_ilosc: str,
         solenie_start: str,
-        solenie_end: str
+        solenie_end: str,
     ) -> None:
         """
         Aktualizuje istniejący wiersz w twarog_production_details
@@ -1749,7 +1950,8 @@ class DBManager:
         """
         with self.create_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 UPDATE twarog_production_details
                 SET
                     milk_type        = ?,  
@@ -1765,22 +1967,25 @@ class DBManager:
                     solenie_start    = ?,
                     solenie_end      = ?
                 WHERE production_record_id = ?
-            """, (
-                milk_type,
-                milk_amount,
-                ph,
-                pasteryzacja,
-                krojenie_start,
-                krojenie_end,
-                dogrzewanie_start,
-                dogrzewanie_end,
-                formy_wielkosc,
-                formy_ilosc,
-                solenie_start,
-                solenie_end,
-                production_record_id
-            ))
+            """,
+                (
+                    milk_type,
+                    milk_amount,
+                    ph,
+                    pasteryzacja,
+                    krojenie_start,
+                    krojenie_end,
+                    dogrzewanie_start,
+                    dogrzewanie_end,
+                    formy_wielkosc,
+                    formy_ilosc,
+                    solenie_start,
+                    solenie_end,
+                    production_record_id,
+                ),
+            )
             conn.commit()
+
     def fill_additives_from_record(self, record_id: int) -> None:
         self.clear_additives_fields()
 
@@ -1788,9 +1993,9 @@ class DBManager:
             return
 
         # załóżmy, że w DBManager mamy:
-        #    get_ser_production_additives_for_record(record_id) 
-        # zwracające listę słowników: [ 
-        #   { "additive_category":..., "additive_name":..., "dose_calculated":... }, … 
+        #    get_ser_production_additives_for_record(record_id)
+        # zwracające listę słowników: [
+        #   { "additive_category":..., "additive_name":..., "dose_calculated":... }, …
         # ]
         lines = self.db_manager.get_ser_production_additives_for_record(record_id)
         for i, row in enumerate(lines):
@@ -1811,13 +2016,15 @@ class DBManager:
             # Możemy wstawić:
             dose_edit.setText(dose_str)  # np. "30.0 g"
         # ewentualnie na końcu update_doses() – ale to znów przeliczy
-        # i może nadpisać. Więc jeśli chcemy to ZACHOWAĆ, możemy pominąć 
-        # update_doses() 
+        # i może nadpisać. Więc jeśli chcemy to ZACHOWAĆ, możemy pominąć
+        # update_doses()
+
     def get_ser_production_additives_for_record(self, record_id: int) -> List[dict]:
         result = []
         with self.create_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT 
                 id,
                 additive_category,
@@ -1825,13 +2032,17 @@ class DBManager:
                 dose_calculated
                 FROM ser_production_additives
                 WHERE production_record_id = ?
-            """, (record_id,))
+            """,
+                (record_id,),
+            )
             rows = cursor.fetchall()
             for row in rows:
-                result.append({
-                    "id":               row[0],
-                    "additive_category": row[1],
-                    "additive_name":     row[2],
-                    "dose_calculated":   row[3],
-                })
+                result.append(
+                    {
+                        "id": row[0],
+                        "additive_category": row[1],
+                        "additive_name": row[2],
+                        "dose_calculated": row[3],
+                    }
+                )
         return result

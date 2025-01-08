@@ -3,8 +3,12 @@
 import os
 from typing import Optional
 from PyQt5.QtWidgets import (
-    QMainWindow, QWidget, QLabel, QFrame,
-    QVBoxLayout, QHBoxLayout
+    QMainWindow,
+    QWidget,
+    QLabel,
+    QFrame,
+    QVBoxLayout,
+    QHBoxLayout,
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QResizeEvent
@@ -21,7 +25,7 @@ class BackgroundScreen(QMainWindow):
         self,
         parent: Optional[QMainWindow] = None,
         bg_image_path: str = r"c:\serownia\images\cheese.jpg",
-        panel_width: int = 500
+        panel_width: int = 500,
     ) -> None:
         super().__init__(parent)
 
@@ -46,7 +50,8 @@ class BackgroundScreen(QMainWindow):
 
         # 5. Tworzymy półprzezroczysty kontener (QFrame)
         self.form_container = QFrame(self.central_w)
-        self.form_container.setStyleSheet("""
+        self.form_container.setStyleSheet(
+            """
             QFrame {
                 background-color: rgba(255, 255, 255, 0.85);
                 border-radius: 15px;
@@ -56,7 +61,8 @@ class BackgroundScreen(QMainWindow):
                 border: none;
                 color: #333;
             }
-        """)
+        """
+        )
         self.form_container.setFixedWidth(panel_width)
 
         # Layout w form_container
@@ -80,9 +86,7 @@ class BackgroundScreen(QMainWindow):
         if not self.bg_pixmap.isNull():
             target_size = self.centralWidget().size()
             scaled = self.bg_pixmap.scaled(
-                target_size,
-                Qt.KeepAspectRatioByExpanding,
-                Qt.SmoothTransformation
+                target_size, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation
             )
             self.bg_label.setPixmap(scaled)
             self.bg_label.resize(target_size)

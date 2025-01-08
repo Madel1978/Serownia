@@ -2,14 +2,13 @@
 
 from typing import Optional, Any, List
 
-from PyQt5.QtWidgets import (
-    QLineEdit, QComboBox, QTableWidgetItem, QMessageBox,
-    QDialog
-)
+from PyQt5.QtWidgets import QLineEdit, QComboBox, QTableWidgetItem, QMessageBox, QDialog
 from PyQt5.QtCore import Qt
 
 from .base_crud_list_screen import BaseCrudListScreen
-from .add_additive_dialog import AddAdditiveDialog  # <-- Upewnij się, że ścieżka jest poprawna
+from .add_additive_dialog import (
+    AddAdditiveDialog,
+)  # <-- Upewnij się, że ścieżka jest poprawna
 
 
 class AdditivesListScreen(BaseCrudListScreen):
@@ -22,9 +21,7 @@ class AdditivesListScreen(BaseCrudListScreen):
     """
 
     def __init__(
-        self,
-        parent: Optional[Any] = None,
-        db_manager: Optional[Any] = None
+        self, parent: Optional[Any] = None, db_manager: Optional[Any] = None
     ) -> None:
         """
         Inicjalizuje ekran "Lista Dodatków", bez wagi, dawkowania i daty.
@@ -37,7 +34,7 @@ class AdditivesListScreen(BaseCrudListScreen):
         super().__init__(
             parent=parent,
             title="Lista Dodatków",
-            columns=["ID", "Nazwa", "Kategoria", "Edytuj/Zapisz", "Usuń"]
+            columns=["ID", "Nazwa", "Kategoria", "Edytuj/Zapisz", "Usuń"],
         )
 
     def load_data(self, filter_text: str = "") -> None:
@@ -55,23 +52,28 @@ class AdditivesListScreen(BaseCrudListScreen):
 
         self.table.setRowCount(0)
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można załadować dodatków.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można załadować dodatków."
+            )
             return
 
         # 1. Pobieramy wszystkie dodatki i kategorie
-        additives = self.db_manager.get_all_additives()  # "id", "name", "weight", "dosage", "category_id"
-        categories = self.db_manager.get_categories()    # "id", "name"
+        additives = (
+            self.db_manager.get_all_additives()
+        )  # "id", "name", "weight", "dosage", "category_id"
+        categories = self.db_manager.get_categories()  # "id", "name"
 
         # 2. Filtrowanie w Pythonie (opcjonalnie)
         ft_lower = filter_text.strip().lower()
         if ft_lower:
             # Przykład: filtrujemy w polu 'name'
             additives = [
-                ad for ad in additives
-                if ft_lower in ad.get("name", "").lower()
+                ad for ad in additives if ft_lower in ad.get("name", "").lower()
             ]
 
-        print(f"[DEBUG] Znaleziono {len(additives)} dodatków (po filtrze='{filter_text}')")
+        print(
+            f"[DEBUG] Znaleziono {len(additives)} dodatków (po filtrze='{filter_text}')"
+        )
 
         # 3. Tworzymy mapowanie category_id -> category_name
         cat_dict = {cat["id"]: cat["name"] for cat in categories}
@@ -121,7 +123,9 @@ class AdditivesListScreen(BaseCrudListScreen):
         Wywoływana przy zapisie (po 'Zapisz'). new_values -> [nazwa, cat_id].
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można zapisać dodatku.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można zapisać dodatku."
+            )
             return
 
         new_name = new_values[0]
@@ -133,7 +137,9 @@ class AdditivesListScreen(BaseCrudListScreen):
         dosage_placeholder = ""
 
         try:
-            self.db_manager.update_additive(item_id, new_name, weight_placeholder, dosage_placeholder, cat_id)
+            self.db_manager.update_additive(
+                item_id, new_name, weight_placeholder, dosage_placeholder, cat_id
+            )
             QMessageBox.information(self, "Sukces", "Zaktualizowano rekord w bazie.")
         except Exception as e:
             QMessageBox.warning(self, "Błąd", f"Nie udało się zapisać: {e}")
@@ -176,7 +182,9 @@ class AdditivesListScreen(BaseCrudListScreen):
         Usuwa dodatek na podstawie ID.
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można usunąć dodatku.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można usunąć dodatku."
+            )
             return
 
         self.db_manager.delete_additive(item_id)
@@ -187,7 +195,9 @@ class AdditivesListScreen(BaseCrudListScreen):
         Otwiera dialog do dodania nowego dodatku (bez wagi, dawkowania).
         """
         if not self.db_manager:
-            QMessageBox.warning(self, "Błąd", "Brak db_manager – nie można dodać dodatku.")
+            QMessageBox.warning(
+                self, "Błąd", "Brak db_manager – nie można dodać dodatku."
+            )
             return
 
         dialog = AddAdditiveDialog(parent=self, db_manager=self.db_manager)

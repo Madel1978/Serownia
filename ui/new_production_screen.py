@@ -3,9 +3,7 @@
 from typing import Optional, Any
 
 from PyQt5.QtGui import QShowEvent
-from PyQt5.QtWidgets import (
-    QGridLayout, QPushButton, QMessageBox
-)
+from PyQt5.QtWidgets import QGridLayout, QPushButton, QMessageBox
 from PyQt5.QtCore import Qt
 
 from ui.background_screen import BackgroundScreen
@@ -21,7 +19,7 @@ class NewProductionScreen(BackgroundScreen):
         super().__init__(
             parent=parent,
             bg_image_path=r"c:\serownia\images\cheese.jpg",
-            panel_width=800  # Możesz dostosować szerokość panelu
+            panel_width=800,  # Możesz dostosować szerokość panelu
         )
 
         self.setWindowTitle("Nowa Produkcja")
@@ -64,16 +62,20 @@ class NewProductionScreen(BackgroundScreen):
         for i, cat in enumerate(categories):
             cat_name = cat["name"]
             btn = QPushButton(cat_name)
-            btn.setStyleSheet("""
+            btn.setStyleSheet(
+                """
                 background-color: #ADD8E6;
                 color: #000080;
                 font-size: 24px;
                 font-weight: bold;
                 border-radius: 10px;
                 padding: 20px;
-            """)
+            """
+            )
             # Kliknięcie przycisku – obsługa danej kategorii
-            btn.clicked.connect(lambda _, cname=cat_name: self.on_category_clicked_by_name(cname))
+            btn.clicked.connect(
+                lambda _, cname=cat_name: self.on_category_clicked_by_name(cname)
+            )
 
             row = i // 2
             col = i % 2
@@ -82,14 +84,16 @@ class NewProductionScreen(BackgroundScreen):
         # Teraz dodajemy przycisk „Powrót” w nowym wierszu, rozciągnięty na 2 kolumny
         row_for_back = (len(categories) // 2) + 1  # wiersz poniżej ostatniego przycisku
         back_button = QPushButton("Powrót")
-        back_button.setStyleSheet("""
+        back_button.setStyleSheet(
+            """
             background-color: #FFCCCC;
             color: #800000;
             font-size: 24px;
             font-weight: bold;
             border-radius: 10px;
             padding: 10px 20px;
-        """)
+        """
+        )
         back_button.clicked.connect(self.go_back)
 
         # Dodajemy w wierszu row_for_back, kolumna 0, obejmując 1 wiersz, 2 kolumny
@@ -118,7 +122,7 @@ class NewProductionScreen(BackgroundScreen):
                 self,
                 "Info",
                 f"Brak słownika 'protocol_screens_by_name' w MainWindow.\n"
-                f"Nie obsługuję protokołu dla '{category_name}'."
+                f"Nie obsługuję protokołu dla '{category_name}'.",
             )
             return
 
@@ -130,8 +134,9 @@ class NewProductionScreen(BackgroundScreen):
                 screen.load_from_record(None)
             else:
                 QMessageBox.warning(
-                    self, "Błąd",
-                    f"Ekran protokołu '{category_name}' nie ma metody 'load_from_record'."
+                    self,
+                    "Błąd",
+                    f"Ekran protokołu '{category_name}' nie ma metody 'load_from_record'.",
                 )
                 return
             mw.show_screen(screen)
@@ -139,5 +144,5 @@ class NewProductionScreen(BackgroundScreen):
             QMessageBox.information(
                 self,
                 "Brak ekranu",
-                f"Nie zaimplementowano protokołu dla kategorii '{category_name}'."
+                f"Nie zaimplementowano protokołu dla kategorii '{category_name}'.",
             )

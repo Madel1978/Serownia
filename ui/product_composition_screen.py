@@ -1,7 +1,5 @@
 from typing import Optional, Any, List
-from PyQt5.QtWidgets import (
-    QLineEdit, QComboBox, QTableWidgetItem, QMessageBox, QDialog
-)
+from PyQt5.QtWidgets import QLineEdit, QComboBox, QTableWidgetItem, QMessageBox, QDialog
 from PyQt5.QtCore import Qt
 
 # Zależnie od struktury projektu:
@@ -27,14 +25,12 @@ class ProductCompositionScreen(BaseCrudListScreen):
     """
 
     def __init__(
-        self,
-        parent: Optional[Any] = None,
-        db_manager: Optional[DBManager] = None
+        self, parent: Optional[Any] = None, db_manager: Optional[DBManager] = None
     ) -> None:
         """
-        Konstruktor ekranu zarządzania składem produktu. 
+        Konstruktor ekranu zarządzania składem produktu.
         Najpierw ustawiamy db_manager i current_product_id,
-        potem wywołujemy konstruktor klasy bazowej, 
+        potem wywołujemy konstruktor klasy bazowej,
         który z kolei uruchamia load_data() (jeśli to zaprogramowano).
         """
         self.db_manager = db_manager
@@ -43,7 +39,14 @@ class ProductCompositionScreen(BaseCrudListScreen):
         super().__init__(
             parent=parent,
             title="Skład produktu",
-            columns=["ID", "Kategoria", "Dodatek", "Dawka/100L", "Edytuj/Zapisz", "Usuń"]
+            columns=[
+                "ID",
+                "Kategoria",
+                "Dodatek",
+                "Dawka/100L",
+                "Edytuj/Zapisz",
+                "Usuń",
+            ],
         )
 
     def set_product_id(self, product_id: int) -> None:
@@ -74,7 +77,9 @@ class ProductCompositionScreen(BaseCrudListScreen):
             additives_dict[add_id] = (add_name, cat_id)
 
         # Pobierz listę wszystkich kategorii dodatków, by mieć category_id -> category_name
-        cat_list = self.db_manager.get_additive_categories()  # np. SELECT * FROM additive_categories
+        cat_list = (
+            self.db_manager.get_additive_categories()
+        )  # np. SELECT * FROM additive_categories
         cat_dict = {}
         for c in cat_list:
             cat_dict[c["id"]] = c["name"]
@@ -118,8 +123,8 @@ class ProductCompositionScreen(BaseCrudListScreen):
                     break
             add_combo.setCurrentIndex(idx)
 
-            self.table.setCellWidget(row_index, 1, cat_edit)    # kol.1
-            self.table.setCellWidget(row_index, 2, add_combo)   # kol.2
+            self.table.setCellWidget(row_index, 1, cat_edit)  # kol.1
+            self.table.setCellWidget(row_index, 2, add_combo)  # kol.2
 
             # kol.3: Dawka/100L
             dosage_edit = QLineEdit(str(row_data.get("dosage_per_100", "")))
@@ -136,26 +141,27 @@ class ProductCompositionScreen(BaseCrudListScreen):
 
         self.table.resizeColumnsToContents()
 
-
     def add_new_item(self) -> None:
         """
         Obsługa przycisku 'Nowy' (z paska narzędzi w BaseCrudListScreen).
         Dodaje kolejny wiersz w product_additives dla aktualnego produktu.
         """
         if not self.db_manager or not self.current_product_id:
-            QMessageBox.warning(self, "Błąd", "Brak db_manager lub nieustawiony product_id.")
+            QMessageBox.warning(
+                self, "Błąd", "Brak db_manager lub nieustawiony product_id."
+            )
             return
 
         # Otwieramy dialog 'AddProductAdditiveDialog':
-        dialog = AddProductAdditiveDialog(self, self.db_manager, self.current_product_id)
+        dialog = AddProductAdditiveDialog(
+            self, self.db_manager, self.current_product_id
+        )
         if dialog.exec_() == QDialog.Accepted:
             # Po kliknięciu "Zapisz" w dialogu, odśwież tabelę:
             self.load_data()
         else:
             QMessageBox.information(
-                self,
-                "Nowy składnik",
-                "Anulowano dodawanie składnika."
+                self, "Nowy składnik", "Anulowano dodawanie składnika."
             )
 
     def update_item_in_db(self, pa_id: int, new_values: List[Any]) -> None:
@@ -168,11 +174,13 @@ class ProductCompositionScreen(BaseCrudListScreen):
             return
 
         if len(new_values) < 2:
-            QMessageBox.warning(self, "Błąd", "Brak wystarczającej liczby wartości do aktualizacji.")
+            QMessageBox.warning(
+                self, "Błąd", "Brak wystarczającej liczby wartości do aktualizacji."
+            )
             return
 
-        new_add_id = new_values[0]   # ID dodatku
-        new_dosage = new_values[1]   # np. '17 ml' lub '30 g'
+        new_add_id = new_values[0]  # ID dodatku
+        new_dosage = new_values[1]  # np. '17 ml' lub '30 g'
 
         try:
             # Przykładowa metoda w db_manager,
@@ -199,8 +207,8 @@ class ProductCompositionScreen(BaseCrudListScreen):
 
     def save_changes(self, row: int) -> None:
         """
-        Nadpisuje metodę z BaseCrudListScreen. 
-        W kolumnie 1 jest QComboBox (dodatek), 
+        Nadpisuje metodę z BaseCrudListScreen.
+        W kolumnie 1 jest QComboBox (dodatek),
         w kolumnie 2 jest QLineEdit (dosage_per_100).
         """
         pa_id_item = self.table.item(row, 0)

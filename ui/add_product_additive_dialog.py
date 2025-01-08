@@ -1,8 +1,15 @@
 from typing import Optional, Any
 from PyQt5.QtWidgets import (
-    QDialog, QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton, QMessageBox
+    QDialog,
+    QVBoxLayout,
+    QLabel,
+    QLineEdit,
+    QComboBox,
+    QPushButton,
+    QMessageBox,
 )
 from PyQt5.QtCore import Qt
+
 
 class AddProductAdditiveDialog(QDialog):
     """
@@ -11,7 +18,12 @@ class AddProductAdditiveDialog(QDialog):
       - Wpisanie dawki (QLineEdit)
     """
 
-    def __init__(self, parent: Optional[Any] = None, db_manager: Optional[Any] = None, product_id: Optional[int] = None):
+    def __init__(
+        self,
+        parent: Optional[Any] = None,
+        db_manager: Optional[Any] = None,
+        product_id: Optional[int] = None,
+    ):
         super().__init__(parent)
         self.db_manager = db_manager
         self.product_id = product_id
@@ -63,8 +75,12 @@ class AddProductAdditiveDialog(QDialog):
             return
 
         try:
-            self.db_manager.add_product_additive(self.product_id, additive_id, dosage_per_100)
-            QMessageBox.information(self, "Sukces", f"Dodano nowy składnik o dawce {dosage_per_100}.")
+            self.db_manager.add_product_additive(
+                self.product_id, additive_id, dosage_per_100
+            )
+            QMessageBox.information(
+                self, "Sukces", f"Dodano nowy składnik o dawce {dosage_per_100}."
+            )
             self.accept()  # Zamknij dialog z kodem QDialog.Accepted
         except Exception as e:
             QMessageBox.warning(self, "Błąd", f"Nie udało się dodać składnika: {e}")

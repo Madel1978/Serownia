@@ -3,14 +3,22 @@
 from typing import Optional, Any, List
 
 from PyQt5.QtWidgets import (
-    QDialog, QMessageBox, QVBoxLayout, QLineEdit, QLabel,
-    QComboBox, QPushButton, QTableWidgetItem
+    QDialog,
+    QMessageBox,
+    QVBoxLayout,
+    QLineEdit,
+    QLabel,
+    QComboBox,
+    QPushButton,
+    QTableWidgetItem,
 )
 from PyQt5.QtCore import Qt
 
 # Dziedziczymy po BaseCrudListScreen
 from .base_crud_list_screen import BaseCrudListScreen
-from database.db_manager import DBManager  # Dostosuj import, jeśli pliki są inaczej zorganizowane
+from database.db_manager import (
+    DBManager,
+)  # Dostosuj import, jeśli pliki są inaczej zorganizowane
 
 
 class AdditivesRegisterScreen(BaseCrudListScreen):
@@ -27,8 +35,8 @@ class AdditivesRegisterScreen(BaseCrudListScreen):
 
     def __init__(
         self,
-        parent: Optional[Any] = None,   # Najczęściej QMainWindow
-        db_manager: Optional[DBManager] = None
+        parent: Optional[Any] = None,  # Najczęściej QMainWindow
+        db_manager: Optional[DBManager] = None,
     ) -> None:
         """
         Inicjalizuje ekran rejestru dodatków, definiując kolumny:
@@ -41,7 +49,14 @@ class AdditivesRegisterScreen(BaseCrudListScreen):
         super().__init__(
             parent=parent,
             title="Rejestr Dodatków",
-            columns=["ID", "Data przyjęcia", "Ilość", "Rodzaj Dodatku", "Edytuj/Zapisz", "Usuń"]
+            columns=[
+                "ID",
+                "Data przyjęcia",
+                "Ilość",
+                "Rodzaj Dodatku",
+                "Edytuj/Zapisz",
+                "Usuń",
+            ],
         )
 
     def load_data(self, filter_text: str = "") -> None:
@@ -64,20 +79,27 @@ class AdditivesRegisterScreen(BaseCrudListScreen):
 
         self.table.setRowCount(0)
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można załadować rejestru dodatków.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można załadować rejestru dodatków."
+            )
             return
 
-        rejestr_list = self.db_manager.get_all_additives_register()  # np. [{"id":..., "date":..., "quantity":..., "additive_name":...}, ...]
+        rejestr_list = (
+            self.db_manager.get_all_additives_register()
+        )  # np. [{"id":..., "date":..., "quantity":..., "additive_name":...}, ...]
 
         # Filtrowanie po additive_name (opcjonalnie)
         ft_lower = filter_text.strip().lower()
         if ft_lower:
             rejestr_list = [
-                rec for rec in rejestr_list
+                rec
+                for rec in rejestr_list
                 if ft_lower in (rec.get("additive_name", "")).lower()
             ]
 
-        print(f"[DEBUG] Znaleziono {len(rejestr_list)} wpisów w rejestrze (po filtrze='{filter_text}')")
+        print(
+            f"[DEBUG] Znaleziono {len(rejestr_list)} wpisów w rejestrze (po filtrze='{filter_text}')"
+        )
 
         for row_index, rec in enumerate(rejestr_list):
             self.table.insertRow(row_index)
@@ -119,7 +141,9 @@ class AdditivesRegisterScreen(BaseCrudListScreen):
         odświeża tabelę (self.load_data).
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można dodać wpisu.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można dodać wpisu."
+            )
             return
 
         dialog = AddAdditiveRegisterDialog(self, self.db_manager)
@@ -127,8 +151,7 @@ class AdditivesRegisterScreen(BaseCrudListScreen):
             self.load_data()
         else:
             QMessageBox.information(
-                self, "Nowy",
-                "Anulowano dodawanie wpisu w rejestrze dodatków."
+                self, "Nowy", "Anulowano dodawanie wpisu w rejestrze dodatków."
             )
 
     def toggle_edit(self, row: int) -> None:
@@ -163,7 +186,9 @@ class AdditivesRegisterScreen(BaseCrudListScreen):
         old_text = old_widget.text().strip() if old_widget else ""
 
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można wczytać listy dodatków.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można wczytać listy dodatków."
+            )
             return
 
         additives_list = self.db_manager.get_all_additives()
@@ -215,7 +240,9 @@ class AdditivesRegisterScreen(BaseCrudListScreen):
         :param new_values: Lista [date_str, quantity_str, additive_id].
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można zaktualizować wpisu.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można zaktualizować wpisu."
+            )
             return
 
         date_str = new_values[0]
@@ -237,7 +264,9 @@ class AdditivesRegisterScreen(BaseCrudListScreen):
         Domyślnie: db_manager.delete_additive_register(item_id).
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można usunąć wpisu.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można usunąć wpisu."
+            )
             return
 
         # np.:
@@ -257,7 +286,7 @@ class AddAdditiveRegisterDialog(QDialog):
     def __init__(
         self,
         parent: Optional[Any] = None,  # Najczęściej AdditivesRegisterScreen
-        db_manager: Optional[Any] = None  # Docelowo: Optional[DBManager]
+        db_manager: Optional[Any] = None,  # Docelowo: Optional[DBManager]
     ) -> None:
         """
         Tworzy formularz do dodania wpisu w rejestrze dodatków.
@@ -304,7 +333,9 @@ class AddAdditiveRegisterDialog(QDialog):
         Wypełnia listę dodatków (np. z db_manager.get_all_additives()) w QComboBox.
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można wczytać listy dodatków.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można wczytać listy dodatków."
+            )
             return
 
         all_additives = self.db_manager.get_all_additives()
@@ -317,7 +348,9 @@ class AddAdditiveRegisterDialog(QDialog):
         poprzez db_manager.add_additive_register(...), a następnie wywołuje self.accept().
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można zapisać wpisu.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można zapisać wpisu."
+            )
             return
 
         date_str = self.date_input.text().strip()
@@ -331,14 +364,13 @@ class AddAdditiveRegisterDialog(QDialog):
         try:
             self.db_manager.add_additive_register(date_str, quantity_str, additive_id)
             QMessageBox.information(
-                self, "Sukces",
+                self,
+                "Sukces",
                 f"Dodano wpis w rejestrze dodatków:\n"
-                f"Data={date_str}, ilość={quantity_str}, ID dodatku={additive_id}"
+                f"Data={date_str}, ilość={quantity_str}, ID dodatku={additive_id}",
             )
             self.accept()
         except Exception as e:
             QMessageBox.warning(
-                self,
-                "Błąd",
-                f"Nie udało się dodać wpisu w rejestrze: {e}"
+                self, "Błąd", f"Nie udało się dodać wpisu w rejestrze: {e}"
             )

@@ -3,13 +3,22 @@
 from typing import Optional, List, Dict, Any
 
 from PyQt5.QtWidgets import (
-    QDialog, QMessageBox, QLineEdit, QComboBox, QVBoxLayout,
-    QPushButton, QLabel, QTableWidgetItem, QWidget
+    QDialog,
+    QMessageBox,
+    QLineEdit,
+    QComboBox,
+    QVBoxLayout,
+    QPushButton,
+    QLabel,
+    QTableWidgetItem,
+    QWidget,
 )
 from PyQt5.QtCore import Qt
 
 from .base_crud_list_screen import BaseCrudListScreen
-from database.db_manager import DBManager  # Dostosuj import, jeśli pliki są inaczej zorganizowane
+from database.db_manager import (
+    DBManager,
+)  # Dostosuj import, jeśli pliki są inaczej zorganizowane
 
 
 class AddPackagingRegisterDialog(QDialog):
@@ -21,9 +30,7 @@ class AddPackagingRegisterDialog(QDialog):
     """
 
     def __init__(
-        self,
-        parent: Optional[QWidget] = None,
-        db_manager: Optional[DBManager] = None
+        self, parent: Optional[QWidget] = None, db_manager: Optional[DBManager] = None
     ) -> None:
         super().__init__(parent)
         self.db_manager = db_manager
@@ -65,7 +72,9 @@ class AddPackagingRegisterDialog(QDialog):
         Pobiera listę opakowań z bazy i wypełnia QComboBox.
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można pobrać listy opakowań.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można pobrać listy opakowań."
+            )
             return
 
         all_packs = self.db_manager.get_all_packaging()
@@ -82,14 +91,18 @@ class AddPackagingRegisterDialog(QDialog):
         """
         date_str = self.date_input.text().strip()
         quantity_str = self.quantity_input.text().strip()
-        packaging_id = self.packaging_combo.itemData(self.packaging_combo.currentIndex())
+        packaging_id = self.packaging_combo.itemData(
+            self.packaging_combo.currentIndex()
+        )
 
         if not date_str or not quantity_str:
             QMessageBox.warning(self, "Błąd", "Data i ilość są wymagane.")
             return
 
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można zapisać wpisu.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można zapisać wpisu."
+            )
             return
 
         try:
@@ -98,7 +111,7 @@ class AddPackagingRegisterDialog(QDialog):
                 self,
                 "Sukces",
                 f"Nowy wpis w rejestrze opakowań:\n"
-                f"Data={date_str}, Ilość={quantity_str}, ID opakowania={packaging_id}"
+                f"Data={date_str}, Ilość={quantity_str}, ID opakowania={packaging_id}",
             )
             self.accept()
 
@@ -115,20 +128,18 @@ class PackagingRegisterScreen(BaseCrudListScreen):
     """
 
     def __init__(
-        self,
-        parent: Optional[QWidget] = None,
-        db_manager: Optional[DBManager] = None
+        self, parent: Optional[QWidget] = None, db_manager: Optional[DBManager] = None
     ) -> None:
         self.db_manager = db_manager
         super().__init__(
             parent=parent,
             title="Rejestr Opakowań",
-            columns=["ID", "Data", "Ilość", "Opakowanie", "Edytuj/Zapisz", "Usuń"]
+            columns=["ID", "Data", "Ilość", "Opakowanie", "Edytuj/Zapisz", "Usuń"],
         )
 
     def load_data(self, filter_text: str = "") -> None:
         """
-        Pobiera listę wpisów z bazy (packaging_register), 
+        Pobiera listę wpisów z bazy (packaging_register),
         ewentualnie filtruje po nazwie opakowania (case-insensitive),
         i wypełnia tabelę.
 
@@ -143,22 +154,27 @@ class PackagingRegisterScreen(BaseCrudListScreen):
         print(f"[DEBUG] PackagingRegisterScreen.load_data(filter_text='{filter_text}')")
 
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można załadować danych.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można załadować danych."
+            )
             return
 
         self.table.setRowCount(0)
         # Pobieramy listę rekordów z rejestru opakowań
-        records = self.db_manager.get_all_packaging_register()  # np. [{"id":..., "date":..., "quantity":..., "packaging_name":...}, ...]
+        records = (
+            self.db_manager.get_all_packaging_register()
+        )  # np. [{"id":..., "date":..., "quantity":..., "packaging_name":...}, ...]
 
         # Jeśli filter_text != "", filtrujemy w Pythonie po packaging_name
         ft_lower = filter_text.strip().lower()
         if ft_lower:
             records = [
-                r for r in records
-                if ft_lower in (r["packaging_name"] or "").lower()
+                r for r in records if ft_lower in (r["packaging_name"] or "").lower()
             ]
 
-        print(f"[DEBUG] Znaleziono {len(records)} rekordów w rejestrze opakowań (po filtrze='{filter_text}')")
+        print(
+            f"[DEBUG] Znaleziono {len(records)} rekordów w rejestrze opakowań (po filtrze='{filter_text}')"
+        )
 
         for row_index, rec in enumerate(records):
             self.table.insertRow(row_index)
@@ -203,8 +219,7 @@ class PackagingRegisterScreen(BaseCrudListScreen):
             self.load_data()
         else:
             QMessageBox.information(
-                self, "Nowy",
-                "Anulowano dodawanie wpisu w rejestrze opakowań."
+                self, "Nowy", "Anulowano dodawanie wpisu w rejestrze opakowań."
             )
 
     def toggle_edit(self, row: int) -> None:
@@ -219,7 +234,7 @@ class PackagingRegisterScreen(BaseCrudListScreen):
         if edit_button.text() == "Edytuj":
             edit_button.setText("Zapisz")
             self.enable_row_edit(row, True)
-            # Ewentualnie zamiana QLineEdit -> QComboBox dla opakowania (kol.3) 
+            # Ewentualnie zamiana QLineEdit -> QComboBox dla opakowania (kol.3)
             # jeśli chcesz, by user zmieniał opakowanie
         else:
             edit_button.setText("Edytuj")
@@ -255,7 +270,9 @@ class PackagingRegisterScreen(BaseCrudListScreen):
         Ale tu zależy od tego, jak chcesz przechowywać 'packaging_name' / 'packaging_id'.
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można zapisać zmian.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można zapisać zmian."
+            )
             return
 
         date_str = new_values[0]
@@ -268,16 +285,22 @@ class PackagingRegisterScreen(BaseCrudListScreen):
         # self.db_manager.update_packaging_register(register_id, date_str, quantity_str, packaging_id)
         # self.load_data()
 
-        print(f"[DEBUG] update_item_in_db ID={register_id}, date={date_str}, qty={quantity_str}, packaging=??? (dostosuj)")
+        print(
+            f"[DEBUG] update_item_in_db ID={register_id}, date={date_str}, qty={quantity_str}, packaging=??? (dostosuj)"
+        )
 
     def delete_item_in_db(self, item_id: int) -> None:
         """
         Usuwanie wpisu z rejestru opakowań.
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można usunąć wpisu.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można usunąć wpisu."
+            )
             return
 
         # np. self.db_manager.delete_packaging_register(item_id)
         # self.load_data()
-        QMessageBox.information(self, "Info", f"Tu zaimplementuj usuwanie wpisu ID={item_id}.")
+        QMessageBox.information(
+            self, "Info", f"Tu zaimplementuj usuwanie wpisu ID={item_id}."
+        )

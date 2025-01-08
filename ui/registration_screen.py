@@ -1,16 +1,17 @@
 from typing import Optional
 
-from PyQt5.QtWidgets import (
-    QLabel, QLineEdit, QPushButton, QMessageBox
-)
+from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QMessageBox
 from PyQt5.QtCore import Qt
 from database.db_manager import DBManager
 from ui.background_screen import BackgroundScreen
 
+
 class RegistrationScreen(BackgroundScreen):
     def __init__(self, parent=None, db_manager: Optional[DBManager] = None):
-        super().__init__(parent, bg_image_path=r"c:\serownia\images\cheese.jpg", panel_width=500)
-        
+        super().__init__(
+            parent, bg_image_path=r"c:\serownia\images\cheese.jpg", panel_width=500
+        )
+
         self.db_manager = db_manager
         self.setWindowTitle("Rejestracja")
         self.setGeometry(100, 100, 800, 600)
@@ -41,7 +42,9 @@ class RegistrationScreen(BackgroundScreen):
             return
 
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak obiektu db_manager – rejestracja niemożliwa.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak obiektu db_manager – rejestracja niemożliwa."
+            )
             return
 
         try:
@@ -55,7 +58,7 @@ class RegistrationScreen(BackgroundScreen):
 
     def _navigate_to_screen(self, screen_name: str) -> None:
         mw = self.window()
-        if hasattr(mw, 'show_screen'):
+        if hasattr(mw, "show_screen"):
             screen = getattr(mw, screen_name, None)
             if screen:
                 mw.show_screen(screen)

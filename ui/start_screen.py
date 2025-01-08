@@ -3,6 +3,7 @@
 from PyQt5.QtWidgets import QPushButton, QGridLayout
 from ui.background_screen import BackgroundScreen
 
+
 class StartScreen(BackgroundScreen):
     """
     Ekran startowy aplikacji, zawiera główne przyciski nawigacyjne
@@ -17,7 +18,7 @@ class StartScreen(BackgroundScreen):
         super().__init__(
             parent=parent,
             bg_image_path=r"c:\serownia\images\cheese.jpg",
-            panel_width=800  # Możesz dostosować szerokość panelu
+            panel_width=800,  # Możesz dostosować szerokość panelu
         )
         self.setWindowTitle("Ekran startowy")
 
@@ -28,26 +29,27 @@ class StartScreen(BackgroundScreen):
         buttons = [
             {
                 "name": "Produkcja",
-                "action": lambda: self._navigate_to_screen("production_screen")
+                "action": lambda: self._navigate_to_screen("production_screen"),
             },
             {
                 "name": "Magazyn",
-                "action": lambda: self._navigate_to_screen("magazyn_screen")
+                "action": lambda: self._navigate_to_screen("magazyn_screen"),
             },
             {
                 "name": "Raporty",
-                "action": lambda: self._navigate_to_screen("raporty_screen")
+                "action": lambda: self._navigate_to_screen("raporty_screen"),
             },
             {
                 "name": "Ustawienia",
-                "action": lambda: self._navigate_to_screen("settings_screen")
+                "action": lambda: self._navigate_to_screen("settings_screen"),
             },
         ]
 
         # Dodaj przyciski do siatki (2 wiersze x 2 kolumny)
         for i, btn_info in enumerate(buttons):
             button = QPushButton(btn_info["name"])
-            button.setStyleSheet("""
+            button.setStyleSheet(
+                """
                 background-color: #ADD8E6;  /* Kolor błękitny */
                 color: #000080;            /* Granatowy tekst */
                 font-size: 24px;
@@ -55,7 +57,8 @@ class StartScreen(BackgroundScreen):
                 border-radius: 15px;       /* Zaokrąglone rogi */
                 padding: 30px;
                 border: 2px solid #87CEEB; /* Jasnoniebieska obwódka */
-            """)
+            """
+            )
             button.clicked.connect(btn_info["action"])
 
             # Wstawienie do siatki: wiersz i kolumnę liczymy z i // 2, i % 2
@@ -74,7 +77,7 @@ class StartScreen(BackgroundScreen):
         """
         # Najbezpieczniej użyć self.window(), bo parent() bywa QStackedWidget
         main_window = self.window()
-        if not main_window or not hasattr(main_window, 'show_screen'):
+        if not main_window or not hasattr(main_window, "show_screen"):
             return  # Albo wyświetl QMessageBox z błędem
 
         screen = getattr(main_window, screen_attribute_name, None)

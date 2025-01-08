@@ -3,8 +3,14 @@ import logging
 from typing import Optional, Dict
 
 from PyQt5.QtWidgets import (
-    QMainWindow, QVBoxLayout, QLabel, QLineEdit,
-    QPushButton, QWidget, QMessageBox, QCheckBox
+    QMainWindow,
+    QVBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QWidget,
+    QMessageBox,
+    QCheckBox,
 )
 from PyQt5.QtCore import Qt
 
@@ -13,6 +19,7 @@ from database.db_manager import DBManager  # Zależnie od Twojej struktury proje
 # Ustawienia loggera – w większych projektach można to zrobić w osobnym module
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
+
 
 def hash_password(password: str) -> str:
     """
@@ -34,7 +41,7 @@ class AccountScreen(QMainWindow):
     def __init__(
         self,
         parent: Optional[QMainWindow] = None,
-        db_manager: Optional[DBManager] = None
+        db_manager: Optional[DBManager] = None,
     ) -> None:
         """
         Inicjalizuje ekran 'Moje Konto'.
@@ -74,32 +81,38 @@ class AccountScreen(QMainWindow):
 
         # 3. CheckBox "Pokaż hasło"
         self.show_password_checkbox = QCheckBox("Pokaż hasło")
-        self.show_password_checkbox.stateChanged.connect(self._toggle_password_visibility)
+        self.show_password_checkbox.stateChanged.connect(
+            self._toggle_password_visibility
+        )
         layout.addWidget(self.show_password_checkbox)
 
         # 4. Przycisk do zapisania zmian
         save_button = QPushButton("Zapisz zmiany")
-        save_button.setStyleSheet("""
+        save_button.setStyleSheet(
+            """
             background-color: #ADD8E6;
             color: #000080;
             font-size: 14px;
             font-weight: bold;
             border-radius: 10px;
             padding: 15px;
-        """)
+        """
+        )
         save_button.clicked.connect(self.save_changes)
         layout.addWidget(save_button)
 
         # 5. Przycisk powrotu
         back_button = QPushButton("Powrót")
-        back_button.setStyleSheet("""
+        back_button.setStyleSheet(
+            """
             background-color: #FFCCCC;
             color: #800000;
             font-size: 14px;
             font-weight: bold;
             border-radius: 10px;
             padding: 10px;
-        """)
+        """
+        )
         back_button.clicked.connect(self._go_back)
         layout.addWidget(back_button)
 
@@ -113,16 +126,22 @@ class AccountScreen(QMainWindow):
         Wywołaj tę metodę po zalogowaniu użytkownika.
         """
         if not self.db_manager:
-            QMessageBox.warning(self, "Błąd", "Brak db_manager – nie można pobrać danych użytkownika.")
+            QMessageBox.warning(
+                self, "Błąd", "Brak db_manager – nie można pobrać danych użytkownika."
+            )
             return
 
         self.user_data = self.db_manager.get_user_by_username(username)
 
         if self.user_data:
             logger.info(f"Załadowano dane użytkownika: {self.user_data}")
-            self.username_label.setText(f"Nazwa użytkownika: {self.user_data['username']}")
+            self.username_label.setText(
+                f"Nazwa użytkownika: {self.user_data['username']}"
+            )
         else:
-            QMessageBox.warning(self, "Błąd", "Nie znaleziono danych użytkownika w bazie.")
+            QMessageBox.warning(
+                self, "Błąd", "Nie znaleziono danych użytkownika w bazie."
+            )
 
     # ----------------------------------------------------------------
     # --------------------- ZAPIS HASŁA (SAVE) -----------------------
@@ -134,7 +153,9 @@ class AccountScreen(QMainWindow):
         Hasło jest walidowane i hashowane przed zapisem do bazy.
         """
         if not self.user_data:
-            QMessageBox.warning(self, "Błąd", "Brak danych użytkownika – nie można zmienić hasła.")
+            QMessageBox.warning(
+                self, "Błąd", "Brak danych użytkownika – nie można zmienić hasła."
+            )
             return
 
         new_password = self.password_input.text().strip()
@@ -151,17 +172,21 @@ class AccountScreen(QMainWindow):
         hashed_pw = hash_password(new_password)
 
         if not self.db_manager:
-            QMessageBox.warning(self, "Błąd", "Brak db_manager – nie można zaktualizować hasła.")
+            QMessageBox.warning(
+                self, "Błąd", "Brak db_manager – nie można zaktualizować hasła."
+            )
             return
 
         # Próba zapisu w DB
         try:
-            self.db_manager.update_user_password(self.user_data['username'], hashed_pw)
+            self.db_manager.update_user_password(self.user_data["username"], hashed_pw)
             QMessageBox.information(self, "Sukces", "Hasło zostało zmienione.")
             self.password_input.clear()
         except Exception as e:
             logger.error(f"Błąd przy aktualizacji hasła: {e}")
-            QMessageBox.critical(self, "Błąd", f"Nie udało się zaktualizować hasła. {str(e)}")
+            QMessageBox.critical(
+                self, "Błąd", f"Nie udało się zaktualizować hasła. {str(e)}"
+            )
 
     def validate_password(self, password: str) -> bool:
         """
@@ -193,12 +218,10 @@ class AccountScreen(QMainWindow):
         Obsługuje powrót do ekranu ustawień (settings_screen).
         Jeśli się nie powiedzie, zamyka obecne okno (fallback).
         """
-        if self.parent and hasattr(self.parent, 'show_screen'):
+        if self.parent and hasattr(self.parent, "show_screen"):
             self.parent.show_screen(self.parent.settings_screen)
         else:
             QMessageBox.warning(
-                self,
-                "Uwaga",
-                "Nie można wrócić do poprzedniego ekranu – zamykam okno."
+                self, "Uwaga", "Nie można wrócić do poprzedniego ekranu – zamykam okno."
             )
             self.close()

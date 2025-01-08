@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.exe
+*.db
+*.pyo
+*.idea
+*.vscode

@@ -2,28 +2,27 @@
 
 from typing import Optional, Any, List
 
-from PyQt5.QtWidgets import (
-    QLineEdit, QDialog, QMessageBox, QComboBox, QTableWidgetItem
-)
+from PyQt5.QtWidgets import QLineEdit, QDialog, QMessageBox, QComboBox, QTableWidgetItem
 from PyQt5.QtCore import Qt
 
 from ui.base_crud_list_screen import BaseCrudListScreen
-from .add_packaging_dialog import AddPackagingDialog  # <-- Upewnij się, że ścieżka jest poprawna
+from .add_packaging_dialog import (
+    AddPackagingDialog,
+)  # <-- Upewnij się, że ścieżka jest poprawna
+
 
 class PackagingListScreen(BaseCrudListScreen):
     """
     Ekran wyświetlający listę opakowań (bez kolumn 'Ilość' i 'Data').
     Kolumny: [ID, Nazwa, Kategoria, Edytuj/Zapisz, Usuń].
-    
-    Obsługuje opcjonalny argument filter_text w load_data, 
-    aby klasa bazowa mogła wywoływać load_data(filter_text="...") 
+
+    Obsługuje opcjonalny argument filter_text w load_data,
+    aby klasa bazowa mogła wywoływać load_data(filter_text="...")
     i przefiltrować nazwy opakowań.
     """
 
     def __init__(
-        self,
-        parent: Optional[Any] = None,
-        db_manager: Optional[Any] = None
+        self, parent: Optional[Any] = None, db_manager: Optional[Any] = None
     ) -> None:
         """
         Inicjalizuje ekran "Lista Opakowań", ograniczony do kolumn
@@ -37,7 +36,7 @@ class PackagingListScreen(BaseCrudListScreen):
         super().__init__(
             parent=parent,
             title="Lista Opakowań",
-            columns=["ID", "Nazwa", "Kategoria", "Edytuj/Zapisz", "Usuń"]
+            columns=["ID", "Nazwa", "Kategoria", "Edytuj/Zapisz", "Usuń"],
         )
 
     def load_data(self, filter_text: str = "") -> None:
@@ -49,14 +48,16 @@ class PackagingListScreen(BaseCrudListScreen):
          - 2: Kategoria (QComboBox, disabled),
          - 3: Edytuj/Zapisz,
          - 4: Usuń.
-         
-        Jeśli 'filter_text' nie jest pusty, filtrujemy opakowania po 'name' 
+
+        Jeśli 'filter_text' nie jest pusty, filtrujemy opakowania po 'name'
         (case-insensitive).
         """
         print(f"[DEBUG] PackagingListScreen.load_data(filter_text='{filter_text}')")
 
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można załadować opakowań.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można załadować opakowań."
+            )
             return
 
         # Czyścimy tabelę
@@ -74,11 +75,12 @@ class PackagingListScreen(BaseCrudListScreen):
         ft_lower = filter_text.strip().lower()
         if ft_lower:
             packaging_list = [
-                p for p in packaging_list
-                if ft_lower in (p["name"] or "").lower()
+                p for p in packaging_list if ft_lower in (p["name"] or "").lower()
             ]
 
-        print(f"[DEBUG] Znaleziono {len(packaging_list)} opakowań (po filtrze='{filter_text}').")
+        print(
+            f"[DEBUG] Znaleziono {len(packaging_list)} opakowań (po filtrze='{filter_text}')."
+        )
 
         # 2. Wypełniamy tabelę
         for row_index, pack in enumerate(packaging_list):
@@ -125,7 +127,9 @@ class PackagingListScreen(BaseCrudListScreen):
         Otwiera dialog do dodania nowego opakowania (bez ilości i daty).
         """
         if not self.db_manager:
-            QMessageBox.warning(self, "Błąd", "Brak db_manager – nie można dodać opakowania.")
+            QMessageBox.warning(
+                self, "Błąd", "Brak db_manager – nie można dodać opakowania."
+            )
             return
 
         # Tworzymy instancję dialogu AddPackagingDialog
@@ -136,14 +140,18 @@ class PackagingListScreen(BaseCrudListScreen):
             # Po kliknięciu „Zapisz” w dialogu i poprawnym dodaniu w bazie
             self.load_data()  # odśwież listę
         else:
-            QMessageBox.information(self, "Nowe opakowanie", "Anulowano dodawanie opakowania.")
+            QMessageBox.information(
+                self, "Nowe opakowanie", "Anulowano dodawanie opakowania."
+            )
 
     def update_item_in_db(self, item_id: int, new_values: List[Any]) -> None:
         """
         Wywoływane przy zapisie (po 'Zapisz'). new_values -> [nazwa, category_id].
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można zaktualizować opakowania.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można zaktualizować opakowania."
+            )
             return
 
         new_name = new_values[0]
@@ -154,7 +162,9 @@ class PackagingListScreen(BaseCrudListScreen):
         date_placeholder = ""
 
         try:
-            self.db_manager.update_packaging(item_id, new_name, quantity_placeholder, date_placeholder, cat_id)
+            self.db_manager.update_packaging(
+                item_id, new_name, quantity_placeholder, date_placeholder, cat_id
+            )
             # (Opcjonalnie) nie wywołuj self.load_data() tu, bo base_crud_list_screen może to robić
         except Exception as e:
             QMessageBox.warning(self, "Błąd", f"Nie udało się zapisać: {e}")
@@ -199,7 +209,9 @@ class PackagingListScreen(BaseCrudListScreen):
         Usuwa opakowanie (bez pytania o ilość i datę, bo ich nie ma w UI).
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można usunąć opakowania.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można usunąć opakowania."
+            )
             return
 
         self.db_manager.delete_packaging(item_id)

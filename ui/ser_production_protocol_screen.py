@@ -1,7 +1,16 @@
 from typing import Optional, Any, List, Tuple
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QGroupBox, QLabel,
-    QLineEdit, QPushButton, QComboBox, QMessageBox, QScrollArea
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QGridLayout,
+    QGroupBox,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QComboBox,
+    QMessageBox,
+    QScrollArea,
 )
 from PyQt5.QtCore import Qt
 from datetime import date  # Do ustawiania dzisiejszej daty
@@ -16,13 +25,13 @@ def parse_dosage(dosage_str: str) -> Tuple[float, str]:
     parts = dosage_str.split()
     if len(parts) == 1:
         try:
-            val = float(parts[0].replace(',', '.'))
+            val = float(parts[0].replace(",", "."))
         except ValueError:
             val = 0.0
         return val, ""
     elif len(parts) >= 2:
         try:
-            val = float(parts[0].replace(',', '.'))
+            val = float(parts[0].replace(",", "."))
         except ValueError:
             val = 0.0
         unit = parts[1]
@@ -42,12 +51,14 @@ class SerProductionProtocolScreen(QWidget):
     """
 
     def __init__(
-        self,
-        parent: Optional[Any] = None,
-        db_manager: Optional[DBManager] = None
+        self, parent: Optional[Any] = None, db_manager: Optional[DBManager] = None
     ):
         super().__init__(parent)
-        print("SerProductionProtocolScreen - constructor called!", "isVisible=", self.isVisible())
+        print(
+            "SerProductionProtocolScreen - constructor called!",
+            "isVisible=",
+            self.isVisible(),
+        )
         self.parent = parent
         self.db_manager = db_manager
 
@@ -55,7 +66,8 @@ class SerProductionProtocolScreen(QWidget):
         self.resize(800, 600)
 
         # Pastelowy styl
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             QWidget {
                 background-color: #FFF9FA; /* bardzo jasny róż */
             }
@@ -89,7 +101,8 @@ class SerProductionProtocolScreen(QWidget):
                 padding: 6px 12px;
                 font-weight: bold;
             }
-        """)
+        """
+        )
 
         print(">>> SerProductionProtocolScreen constructor START")
 
@@ -106,11 +119,11 @@ class SerProductionProtocolScreen(QWidget):
         self.main_layout = QVBoxLayout(self.main_widget)
 
         # Sekcje A, B, C, D
-        self.create_section_a_params()   # A: Parametry
-        self.create_section_b_additives()# B: Dodatki (3 kolumny)
-        self.create_section_c_stages()   # C: 9 czynności
+        self.create_section_a_params()  # A: Parametry
+        self.create_section_b_additives()  # B: Dodatki (3 kolumny)
+        self.create_section_c_stages()  # C: 9 czynności
         self.create_section_d_parties()  # D: Ewidencja partii
-        self.create_bottom_buttons()     # Dolny pasek (Powrót / Zapisz)
+        self.create_bottom_buttons()  # Dolny pasek (Powrót / Zapisz)
 
         self.scroll_area.setWidget(self.main_widget)
         outer_layout = QVBoxLayout()
@@ -272,10 +285,15 @@ class SerProductionProtocolScreen(QWidget):
         label_width = 195
         field_width = 80
 
-        def add_two_rows(grid, base_row: int,
-                         nazwa_czynnosci: str,
-                         opis1: str, opis2: str,
-                         attr1: str, attr2: str):
+        def add_two_rows(
+            grid,
+            base_row: int,
+            nazwa_czynnosci: str,
+            opis1: str,
+            opis2: str,
+            attr1: str,
+            attr2: str,
+        ):
             """
             Tworzy w gridzie 2 wiersze:
               R1: [puste] | opis1    | opis2
@@ -289,9 +307,9 @@ class SerProductionProtocolScreen(QWidget):
             lbl_opis1 = QLabel(opis1)
             lbl_opis2 = QLabel(opis2)
 
-            grid.addWidget(lbl_empty,   base_row,   0)
-            grid.addWidget(lbl_opis1,   base_row,   1)
-            grid.addWidget(lbl_opis2,   base_row,   2)
+            grid.addWidget(lbl_empty, base_row, 0)
+            grid.addWidget(lbl_opis1, base_row, 1)
+            grid.addWidget(lbl_opis2, base_row, 2)
 
             # Wiersz 2 (nazwa czynności, QLineEdit, QLineEdit)
             lbl_czyn = QLabel(nazwa_czynnosci)
@@ -305,45 +323,108 @@ class SerProductionProtocolScreen(QWidget):
             setattr(self, attr1, edit_1)
             setattr(self, attr2, edit_2)
 
-            grid.addWidget(lbl_czyn,   base_row+1, 0)
-            grid.addWidget(edit_1,     base_row+1, 1)
-            grid.addWidget(edit_2,     base_row+1, 2)
+            grid.addWidget(lbl_czyn, base_row + 1, 0)
+            grid.addWidget(edit_1, base_row + 1, 1)
+            grid.addWidget(edit_2, base_row + 1, 2)
 
         # 1) Dodanie kultur (Godzina, Czas trwania)
-        add_two_rows(gridC, 1, "Dodanie kultur", "Godzina", "Czas trwania",
-                     "dodanie_kultur_start_input", "dodanie_kultur_end_input")
+        add_two_rows(
+            gridC,
+            1,
+            "Dodanie kultur",
+            "Godzina",
+            "Czas trwania",
+            "dodanie_kultur_start_input",
+            "dodanie_kultur_end_input",
+        )
 
         # 2) Podpuszczka (Godzina, Czas trwania)
-        add_two_rows(gridC, 3, "Podpuszczka", "Godzina", "Czas trwania",
-                     "podpuszczka_start_input", "podpuszczka_end_input")
+        add_two_rows(
+            gridC,
+            3,
+            "Podpuszczka",
+            "Godzina",
+            "Czas trwania",
+            "podpuszczka_start_input",
+            "podpuszczka_end_input",
+        )
 
         # 3) Krojenie (Godzina, Czas trwania)
-        add_two_rows(gridC, 5, "Krojenie", "Godzina", "Czas trwania",
-                     "krojenie_start_input", "krojenie_end_input")
+        add_two_rows(
+            gridC,
+            5,
+            "Krojenie",
+            "Godzina",
+            "Czas trwania",
+            "krojenie_start_input",
+            "krojenie_end_input",
+        )
 
         # 4) Płukanie ziarna (Serwatka-, Woda+)
-        add_two_rows(gridC, 7, "Płukanie ziarna", "Serwatka-", "Woda+",
-                     "serwatka_start_input", "serwatka_end_input")
+        add_two_rows(
+            gridC,
+            7,
+            "Płukanie ziarna",
+            "Serwatka-",
+            "Woda+",
+            "serwatka_start_input",
+            "serwatka_end_input",
+        )
 
         # 5) Dogrzewanie ziarna (Godzina, Czas trwania)
-        add_two_rows(gridC, 9, "Dogrzewanie ziarna", "Godzina", "Czas trwania",
-                     "dogrzewanie_start_input", "dogrzewanie_end_input")
+        add_two_rows(
+            gridC,
+            9,
+            "Dogrzewanie ziarna",
+            "Godzina",
+            "Czas trwania",
+            "dogrzewanie_start_input",
+            "dogrzewanie_end_input",
+        )
 
         # 6) Dosuszanie ziarna (Godzina, Czas trwania)
-        add_two_rows(gridC, 11, "Dosuszanie ziarna", "Godzina", "Czas trwania",
-                     "dosuszanie_start_input", "dosuszanie_end_input")
+        add_two_rows(
+            gridC,
+            11,
+            "Dosuszanie ziarna",
+            "Godzina",
+            "Czas trwania",
+            "dosuszanie_start_input",
+            "dosuszanie_end_input",
+        )
 
         # 7) Wstępne prasowanie (Początek, Koniec)
-        add_two_rows(gridC, 13, "Wstępne prasowanie", "Początek", "Koniec",
-                     "wstepne_prasowanie_start_input", "wstepne_prasowanie_end_input")
+        add_two_rows(
+            gridC,
+            13,
+            "Wstępne prasowanie",
+            "Początek",
+            "Koniec",
+            "wstepne_prasowanie_start_input",
+            "wstepne_prasowanie_end_input",
+        )
 
         # 8) Formy (Wielkość, Ilość)
-        add_two_rows(gridC, 15, "Formy", "Wielkość", "Ilość",
-                     "formy_wielkosc_input", "formy_ilosc_input")
+        add_two_rows(
+            gridC,
+            15,
+            "Formy",
+            "Wielkość",
+            "Ilość",
+            "formy_wielkosc_input",
+            "formy_ilosc_input",
+        )
 
         # 9) Solenie (Godzina, Czas trwania)
-        add_two_rows(gridC, 17, "Solenie", "Godzina", "Czas trwania",
-                     "solenie_start_input", "solenie_end_input")
+        add_two_rows(
+            gridC,
+            17,
+            "Solenie",
+            "Godzina",
+            "Czas trwania",
+            "solenie_start_input",
+            "solenie_end_input",
+        )
 
         groupC.setLayout(gridC)
         self.main_layout.addWidget(groupC)
@@ -475,7 +556,7 @@ class SerProductionProtocolScreen(QWidget):
         # ISTNIEJĄCY protokół
         # -----------------------------------------------------------
         self.current_protocol_id = record_data.get("id", None)
-        date_str   = record_data.get("date", "")
+        date_str = record_data.get("date", "")
         series_str = record_data.get("series", "")
         product_id = record_data.get("product_id", None)
 
@@ -497,7 +578,7 @@ class SerProductionProtocolScreen(QWidget):
                 QMessageBox.warning(
                     self,
                     "Uwaga",
-                    f"Produkt o ID={product_id} nie istnieje w bazie. Ustawiam pierwszy z listy."
+                    f"Produkt o ID={product_id} nie istnieje w bazie. Ustawiam pierwszy z listy.",
                 )
             if self.product_combo.count() > 0:
                 self.product_combo.setCurrentIndex(0)
@@ -506,7 +587,9 @@ class SerProductionProtocolScreen(QWidget):
         # Pobierz szczegóły z ser_production_details
         # -----------------------------------------------------------
         if self.db_manager and self.current_protocol_id is not None:
-            details = self.db_manager.get_ser_production_details(self.current_protocol_id)
+            details = self.db_manager.get_ser_production_details(
+                self.current_protocol_id
+            )
             if details:
                 # A) Mleko, pH + pasteryzacja
                 self.milkAmount_input.setText(details.get("milk_amount", ""))
@@ -519,10 +602,16 @@ class SerProductionProtocolScreen(QWidget):
                 self.pasteur_combo.setCurrentIndex(idx_pasteur)
 
                 # B) 9 czynności
-                self.dodanie_kultur_start_input.setText(details.get("dodanie_kultur_start", ""))
-                self.dodanie_kultur_end_input.setText(details.get("dodanie_kultur_end", ""))
+                self.dodanie_kultur_start_input.setText(
+                    details.get("dodanie_kultur_start", "")
+                )
+                self.dodanie_kultur_end_input.setText(
+                    details.get("dodanie_kultur_end", "")
+                )
 
-                self.podpuszczka_start_input.setText(details.get("podpuszczka_start", ""))
+                self.podpuszczka_start_input.setText(
+                    details.get("podpuszczka_start", "")
+                )
                 self.podpuszczka_end_input.setText(details.get("podpuszczka_end", ""))
 
                 self.krojenie_start_input.setText(details.get("krojenie_start", ""))
@@ -531,14 +620,20 @@ class SerProductionProtocolScreen(QWidget):
                 self.serwatka_start_input.setText(details.get("serwatka_start", ""))
                 self.serwatka_end_input.setText(details.get("serwatka_end", ""))
 
-                self.dogrzewanie_start_input.setText(details.get("dogrzewanie_start", ""))
+                self.dogrzewanie_start_input.setText(
+                    details.get("dogrzewanie_start", "")
+                )
                 self.dogrzewanie_end_input.setText(details.get("dogrzewanie_end", ""))
 
                 self.dosuszanie_start_input.setText(details.get("dosuszanie_start", ""))
                 self.dosuszanie_end_input.setText(details.get("dosuszanie_end", ""))
 
-                self.wstepne_prasowanie_start_input.setText(details.get("wstepne_prasowanie_start", ""))
-                self.wstepne_prasowanie_end_input.setText(details.get("wstepne_prasowanie_end", ""))
+                self.wstepne_prasowanie_start_input.setText(
+                    details.get("wstepne_prasowanie_start", "")
+                )
+                self.wstepne_prasowanie_end_input.setText(
+                    details.get("wstepne_prasowanie_end", "")
+                )
 
                 self.formy_wielkosc_input.setText(details.get("formy_wielkosc", ""))
                 self.formy_ilosc_input.setText(details.get("formy_ilosc", ""))
@@ -588,9 +683,6 @@ class SerProductionProtocolScreen(QWidget):
         # Na końcu przelicz dawki:
         self.update_doses()
 
-
-
-
     def save_protocol(self) -> None:
         """
         Zapisuje / aktualizuje protokół w bazie:
@@ -606,17 +698,19 @@ class SerProductionProtocolScreen(QWidget):
         # 1) Odczyt pól sekcji A
         # ----------------------------------------------------------------
         product_id = self.product_combo.currentData()
-        date_str   = self.date_input.text().strip()
+        date_str = self.date_input.text().strip()
         series_str = self.series_input.text().strip()
-        milk_str   = self.milkAmount_input.text().strip()
-        ph_str     = self.ph_input.text().strip()
+        milk_str = self.milkAmount_input.text().strip()
+        ph_str = self.ph_input.text().strip()
 
         # Odczyt z combo pasteryzacji (np. "Brak", "65°C/30min", "85°C/10min")
         pasteryzacja_str = self.pasteur_combo.currentText().strip()
 
         # Minimalna walidacja
         if not date_str or not series_str or not milk_str:
-            QMessageBox.warning(self, "Błąd", "Uzupełnij datę, numer serii i ilość mleka.")
+            QMessageBox.warning(
+                self, "Błąd", "Uzupełnij datę, numer serii i ilość mleka."
+            )
             return
         if product_id is None or product_id == -1:
             QMessageBox.warning(self, "Błąd", "Nie wybrano poprawnego produktu (Ser).")
@@ -630,32 +724,34 @@ class SerProductionProtocolScreen(QWidget):
         # ----------------------------------------------------------------
         # 2) Odczyt pól sekcji C – 9 czynności (każda 2 parametry: start/end)
         # ----------------------------------------------------------------
-        dodanie_kultur_start_str     = self.dodanie_kultur_start_input.text().strip()
-        dodanie_kultur_end_str       = self.dodanie_kultur_end_input.text().strip()
+        dodanie_kultur_start_str = self.dodanie_kultur_start_input.text().strip()
+        dodanie_kultur_end_str = self.dodanie_kultur_end_input.text().strip()
 
-        podpuszczka_start_str        = self.podpuszczka_start_input.text().strip()
-        podpuszczka_end_str          = self.podpuszczka_end_input.text().strip()
+        podpuszczka_start_str = self.podpuszczka_start_input.text().strip()
+        podpuszczka_end_str = self.podpuszczka_end_input.text().strip()
 
-        krojenie_start_str           = self.krojenie_start_input.text().strip()
-        krojenie_end_str             = self.krojenie_end_input.text().strip()
+        krojenie_start_str = self.krojenie_start_input.text().strip()
+        krojenie_end_str = self.krojenie_end_input.text().strip()
 
-        serwatka_start_str           = self.serwatka_start_input.text().strip()
-        serwatka_end_str             = self.serwatka_end_input.text().strip()
+        serwatka_start_str = self.serwatka_start_input.text().strip()
+        serwatka_end_str = self.serwatka_end_input.text().strip()
 
-        dogrzewanie_start_str        = self.dogrzewanie_start_input.text().strip()
-        dogrzewanie_end_str          = self.dogrzewanie_end_input.text().strip()
+        dogrzewanie_start_str = self.dogrzewanie_start_input.text().strip()
+        dogrzewanie_end_str = self.dogrzewanie_end_input.text().strip()
 
-        dosuszanie_start_str         = self.dosuszanie_start_input.text().strip()
-        dosuszanie_end_str           = self.dosuszanie_end_input.text().strip()
+        dosuszanie_start_str = self.dosuszanie_start_input.text().strip()
+        dosuszanie_end_str = self.dosuszanie_end_input.text().strip()
 
-        wstepne_prasowanie_start_str = self.wstepne_prasowanie_start_input.text().strip()
-        wstepne_prasowanie_end_str   = self.wstepne_prasowanie_end_input.text().strip()
+        wstepne_prasowanie_start_str = (
+            self.wstepne_prasowanie_start_input.text().strip()
+        )
+        wstepne_prasowanie_end_str = self.wstepne_prasowanie_end_input.text().strip()
 
-        formy_wielkosc_str           = self.formy_wielkosc_input.text().strip()
-        formy_ilosc_str              = self.formy_ilosc_input.text().strip()
+        formy_wielkosc_str = self.formy_wielkosc_input.text().strip()
+        formy_ilosc_str = self.formy_ilosc_input.text().strip()
 
-        solenie_start_str            = self.solenie_start_input.text().strip()
-        solenie_end_str              = self.solenie_end_input.text().strip()
+        solenie_start_str = self.solenie_start_input.text().strip()
+        solenie_end_str = self.solenie_end_input.text().strip()
 
         # ----------------------------------------------------------------
         # 3) Zapis / aktualizacja w bazie (production_records + ser_production_details_extended)
@@ -689,20 +785,16 @@ class SerProductionProtocolScreen(QWidget):
                     formy_wielkosc=formy_wielkosc_str,
                     formy_ilosc=formy_ilosc_str,
                     solenie_start=solenie_start_str,
-                    solenie_end=solenie_end_str
+                    solenie_end=solenie_end_str,
                 )
                 self.current_protocol_id = new_id
                 QMessageBox.information(
-                    self, "Sukces",
-                    f"Protokół '{series_str}' zapisany (NOWY)."
+                    self, "Sukces", f"Protokół '{series_str}' zapisany (NOWY)."
                 )
             else:
                 # EDYCJA istniejącego
                 self.db_manager.update_production_record(
-                    self.current_protocol_id,
-                    date_str,
-                    series_str,
-                    product_id
+                    self.current_protocol_id, date_str, series_str, product_id
                 )
                 self.db_manager.update_ser_production_details_extended(
                     production_record_id=self.current_protocol_id,
@@ -726,12 +818,13 @@ class SerProductionProtocolScreen(QWidget):
                     formy_wielkosc=formy_wielkosc_str,
                     formy_ilosc=formy_ilosc_str,
                     solenie_start=solenie_start_str,
-                    solenie_end=solenie_end_str
+                    solenie_end=solenie_end_str,
                 )
 
                 QMessageBox.information(
-                    self, "Sukces",
-                    f"Zaktualizowano protokół '{series_str}' (ID={self.current_protocol_id})."
+                    self,
+                    "Sukces",
+                    f"Zaktualizowano protokół '{series_str}' (ID={self.current_protocol_id}).",
                 )
 
             # ----------------------------------------------------------------
@@ -742,29 +835,20 @@ class SerProductionProtocolScreen(QWidget):
 
             # Zwróć uwagę, że usunęliśmy pole time_edit,
             # więc self.additive_lines = [(cat_edit, add_edit, dose_edit), ...]
-            for (cat_edit, add_edit, dose_edit) in self.additive_lines:
-                cat_str  = cat_edit.text().strip()
-                add_str  = add_edit.text().strip()
+            for cat_edit, add_edit, dose_edit in self.additive_lines:
+                cat_str = cat_edit.text().strip()
+                add_str = add_edit.text().strip()
                 dose_val = dose_edit.text().strip()
                 if not cat_str and not add_str and not dose_val:
                     continue  # pomijamy wiersz pusty
 
                 # Wstaw do ser_production_additives (3 kolumny: cat, add, dose)
                 self.db_manager.add_ser_production_additive_3col(
-                    record_id,
-                    cat_str,
-                    add_str,
-                    dose_val
+                    record_id, cat_str, add_str, dose_val
                 )
 
         except Exception as e:
-            QMessageBox.warning(
-                self,
-                "Błąd",
-                f"Nie udało się zapisać protokołu: {e}"
-            )
-
-
+            QMessageBox.warning(self, "Błąd", f"Nie udało się zapisać protokołu: {e}")
 
     def generate_series_number(self) -> str:
         """Generuje numer serii w formacie xxxyy_zz."""
@@ -831,7 +915,7 @@ class SerProductionProtocolScreen(QWidget):
 
     def clear_doses(self):
         """Czyści kolumnę 'Dawka' (sekcja B)."""
-        for (cat_edit, add_edit, dose_edit) in self.additive_lines:
+        for cat_edit, add_edit, dose_edit in self.additive_lines:
             dose_edit.clear()
 
     def get_category_name_by_id(self, cat_id: int) -> str:
@@ -891,7 +975,7 @@ class SerProductionProtocolScreen(QWidget):
             self.update_doses()
         else:
             self.clear_additives_fields()
-            
+
     def showEvent(self, event):
         super().showEvent(event)
         print("SerProductionProtocolScreen.showEvent() - I'm being shown!")

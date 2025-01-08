@@ -2,9 +2,7 @@
 
 from typing import Optional, Any, List
 
-from PyQt5.QtWidgets import (
-    QLineEdit, QTableWidgetItem, QMessageBox, QInputDialog
-)
+from PyQt5.QtWidgets import QLineEdit, QTableWidgetItem, QMessageBox, QInputDialog
 from PyQt5.QtCore import Qt
 
 from ui.base_crud_list_screen import BaseCrudListScreen
@@ -23,8 +21,8 @@ class PackagingCategoriesCrudScreen(BaseCrudListScreen):
 
     def __init__(
         self,
-        parent: Optional[Any] = None,   # najczęściej QMainWindow
-        db_manager: Optional[Any] = None
+        parent: Optional[Any] = None,  # najczęściej QMainWindow
+        db_manager: Optional[Any] = None,
     ) -> None:
         """
         Definiujemy kolumny: [ID, Nazwa kategorii opakowań, Edytuj/Zapisz, Usuń].
@@ -33,7 +31,7 @@ class PackagingCategoriesCrudScreen(BaseCrudListScreen):
         super().__init__(
             parent=parent,
             title="Kategorie Opakowań (CRUD)",
-            columns=["ID", "Nazwa kategorii opakowań", "Edytuj/Zapisz", "Usuń"]
+            columns=["ID", "Nazwa kategorii opakowań", "Edytuj/Zapisz", "Usuń"],
         )
 
     def load_data(self, filter_text: str = "") -> None:
@@ -45,7 +43,9 @@ class PackagingCategoriesCrudScreen(BaseCrudListScreen):
 
         columns = [0=ID, 1=Nazwa, 2=Edytuj/Zapisz, 3=Usuń].
         """
-        print(f"[DEBUG] PackagingCategoriesCrudScreen.load_data(filter_text='{filter_text}')")
+        print(
+            f"[DEBUG] PackagingCategoriesCrudScreen.load_data(filter_text='{filter_text}')"
+        )
 
         if not self.db_manager:
             QMessageBox.critical(self, "Błąd", "Brak db_manager.")
@@ -53,17 +53,18 @@ class PackagingCategoriesCrudScreen(BaseCrudListScreen):
 
         self.table.setRowCount(0)
         # 1. Pobieramy wszystkie kategorie
-        categories = self.db_manager.get_packaging_categories()  # np. [{"id": 1, "name": "..."}]
+        categories = (
+            self.db_manager.get_packaging_categories()
+        )  # np. [{"id": 1, "name": "..."}]
 
         # 2. (Opcjonalna) filtracja w Pythonie
         ft_lower = filter_text.strip().lower()
         if ft_lower:
-            categories = [
-                cat for cat in categories
-                if ft_lower in cat["name"].lower()
-            ]
+            categories = [cat for cat in categories if ft_lower in cat["name"].lower()]
 
-        print(f"[DEBUG] Znaleziono {len(categories)} kategorii (po filtrze='{filter_text}')")
+        print(
+            f"[DEBUG] Znaleziono {len(categories)} kategorii (po filtrze='{filter_text}')"
+        )
 
         # 3. Wypełniamy tabelę
         for row_index, cat in enumerate(categories):
@@ -99,14 +100,14 @@ class PackagingCategoriesCrudScreen(BaseCrudListScreen):
             return
 
         name, ok = QInputDialog.getText(
-            self,
-            "Dodaj kategorię opakowań",
-            "Nazwa nowej kategorii:"
+            self, "Dodaj kategorię opakowań", "Nazwa nowej kategorii:"
         )
         if ok and name.strip():
             try:
                 self.db_manager.add_packaging_category(name.strip())
-                QMessageBox.information(self, "Sukces", f"Dodano kategorię: {name.strip()}")
+                QMessageBox.information(
+                    self, "Sukces", f"Dodano kategorię: {name.strip()}"
+                )
                 self.load_data()
             except Exception as e:
                 QMessageBox.warning(self, "Błąd", f"Nie udało się dodać kategorii: {e}")
@@ -127,7 +128,9 @@ class PackagingCategoriesCrudScreen(BaseCrudListScreen):
         try:
             self.db_manager.update_packaging_category(item_id, new_name)
         except Exception as e:
-            QMessageBox.warning(self, "Błąd", f"Nie udało się zaktualizować kategorii: {e}")
+            QMessageBox.warning(
+                self, "Błąd", f"Nie udało się zaktualizować kategorii: {e}"
+            )
             raise
 
     def delete_item_in_db(self, item_id: int) -> None:

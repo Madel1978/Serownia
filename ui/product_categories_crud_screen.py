@@ -3,12 +3,11 @@
 from typing import Optional, Any, List
 import sqlite3  # Możliwe, że używasz do łapania IntegrityError
 
-from PyQt5.QtWidgets import (
-    QLineEdit, QTableWidgetItem, QMessageBox, QInputDialog
-)
+from PyQt5.QtWidgets import QLineEdit, QTableWidgetItem, QMessageBox, QInputDialog
 from PyQt5.QtCore import Qt
 
 from ui.base_crud_list_screen import BaseCrudListScreen
+
 # Jeśli plik jest inaczej zorganizowany, dostosuj ścieżkę powyżej.
 
 
@@ -24,9 +23,7 @@ class ProductCategoriesCrudScreen(BaseCrudListScreen):
     """
 
     def __init__(
-        self,
-        parent: Optional[Any] = None,
-        db_manager: Optional[Any] = None
+        self, parent: Optional[Any] = None, db_manager: Optional[Any] = None
     ) -> None:
         """
         Definiujemy kolumny: [ID, Nazwa kategorii produktów, Edytuj/Zapisz, Usuń].
@@ -35,7 +32,7 @@ class ProductCategoriesCrudScreen(BaseCrudListScreen):
         super().__init__(
             parent=parent,
             title="Kategorie Produktów (CRUD)",
-            columns=["ID", "Nazwa kategorii produktów", "Edytuj/Zapisz", "Usuń"]
+            columns=["ID", "Nazwa kategorii produktów", "Edytuj/Zapisz", "Usuń"],
         )
 
     def load_data(self, filter_text: str = "") -> None:
@@ -45,7 +42,9 @@ class ProductCategoriesCrudScreen(BaseCrudListScreen):
 
         columns = [0=ID, 1=Nazwa, 2=Edytuj/Zapisz, 3=Usuń]
         """
-        print(f"[DEBUG] ProductCategoriesCrudScreen.load_data(filter_text='{filter_text}')")
+        print(
+            f"[DEBUG] ProductCategoriesCrudScreen.load_data(filter_text='{filter_text}')"
+        )
 
         if not self.db_manager:
             QMessageBox.critical(self, "Błąd", "Brak db_manager.")
@@ -54,17 +53,18 @@ class ProductCategoriesCrudScreen(BaseCrudListScreen):
         self.table.setRowCount(0)
 
         # 1. Pobieramy wszystkie kategorie
-        categories = self.db_manager.get_product_categories()  # np. [{"id": 1, "name": "..."}]
+        categories = (
+            self.db_manager.get_product_categories()
+        )  # np. [{"id": 1, "name": "..."}]
 
         # 2. Filtrowanie w Pythonie (opcjonalnie)
         ft_lower = filter_text.strip().lower()
         if ft_lower:
-            categories = [
-                cat for cat in categories
-                if ft_lower in cat["name"].lower()
-            ]
+            categories = [cat for cat in categories if ft_lower in cat["name"].lower()]
 
-        print(f"[DEBUG] Znaleziono {len(categories)} kategorii (po filtrze='{filter_text}')")
+        print(
+            f"[DEBUG] Znaleziono {len(categories)} kategorii (po filtrze='{filter_text}')"
+        )
 
         # 3. Wstawiamy do tabeli
         for row_index, cat in enumerate(categories):
@@ -77,7 +77,9 @@ class ProductCategoriesCrudScreen(BaseCrudListScreen):
 
             # Kol 1: Nazwa kategorii
             name_edit = QLineEdit(cat["name"])
-            name_edit.setEnabled(False)  # Domyślnie tylko do odczytu, odblokujemy przy "Edytuj"
+            name_edit.setEnabled(
+                False
+            )  # Domyślnie tylko do odczytu, odblokujemy przy "Edytuj"
             self.table.setCellWidget(row_index, 1, name_edit)
 
             # Kol 2: Edytuj/Zapisz
@@ -100,31 +102,25 @@ class ProductCategoriesCrudScreen(BaseCrudListScreen):
             return
 
         name, ok = QInputDialog.getText(
-            self,
-            "Dodaj kategorię produktów",
-            "Nazwa nowej kategorii:"
+            self, "Dodaj kategorię produktów", "Nazwa nowej kategorii:"
         )
         if ok and name.strip():
             try:
                 self.db_manager.add_product_category(name.strip())
-                QMessageBox.information(self, "Sukces", f"Dodano kategorię: {name.strip()}")
+                QMessageBox.information(
+                    self, "Sukces", f"Dodano kategorię: {name.strip()}"
+                )
                 self.load_data()
 
             except sqlite3.IntegrityError:
                 # Jeśli w bazie mamy klucz UNIQUE na kolumnie name,
                 # przy próbie dodania duplikatu pojawia się IntegrityError
                 QMessageBox.warning(
-                    self,
-                    "Błąd",
-                    f"Kategoria '{name.strip()}' już istnieje w bazie!"
+                    self, "Błąd", f"Kategoria '{name.strip()}' już istnieje w bazie!"
                 )
 
             except Exception as e:
-                QMessageBox.warning(
-                    self,
-                    "Błąd",
-                    f"Nie udało się dodać kategorii: {e}"
-                )
+                QMessageBox.warning(self, "Błąd", f"Nie udało się dodać kategorii: {e}")
 
     def update_item_in_db(self, item_id: int, new_values: List[Any]) -> None:
         """
@@ -142,13 +138,13 @@ class ProductCategoriesCrudScreen(BaseCrudListScreen):
         try:
             self.db_manager.update_product_category(item_id, new_name)
         except sqlite3.IntegrityError:
-            QMessageBox.warning(self, "Błąd", f"Kategoria '{new_name}' już istnieje w bazie!")
+            QMessageBox.warning(
+                self, "Błąd", f"Kategoria '{new_name}' już istnieje w bazie!"
+            )
             raise  # Możesz pominąć raise, jeśli wystarczy sam komunikat
         except Exception as e:
             QMessageBox.warning(
-                self,
-                "Błąd",
-                f"Nie udało się zaktualizować kategorii: {e}"
+                self, "Błąd", f"Nie udało się zaktualizować kategorii: {e}"
             )
             raise
 
@@ -165,9 +161,5 @@ class ProductCategoriesCrudScreen(BaseCrudListScreen):
         try:
             self.db_manager.delete_product_category(item_id)
         except Exception as e:
-            QMessageBox.warning(
-                self,
-                "Błąd",
-                f"Nie udało się usunąć kategorii: {e}"
-            )
+            QMessageBox.warning(self, "Błąd", f"Nie udało się usunąć kategorii: {e}")
             raise

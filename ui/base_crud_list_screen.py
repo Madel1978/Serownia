@@ -3,12 +3,18 @@
 from typing import Optional, List, Any
 
 from PyQt5.QtWidgets import (
-    QPushButton, QTableWidgetItem, QMessageBox, QWidget, QLineEdit, QComboBox,
-    QVBoxLayout
+    QPushButton,
+    QTableWidgetItem,
+    QMessageBox,
+    QWidget,
+    QLineEdit,
+    QComboBox,
+    QVBoxLayout,
 )
 from PyQt5.QtCore import Qt
 
 from .base_list_screen import BaseListScreen
+
 
 class BaseCrudListScreen(BaseListScreen):
     """
@@ -23,7 +29,7 @@ class BaseCrudListScreen(BaseListScreen):
         self,
         parent: Optional[QWidget] = None,
         title: str = "Lista",
-        columns: Optional[List[str]] = None
+        columns: Optional[List[str]] = None,
     ) -> None:
         """
         Inicjalizuje ekran z listą (CRUD). Dodaje też przycisk 'Powrót' na dole.
@@ -50,6 +56,7 @@ class BaseCrudListScreen(BaseListScreen):
         Tworzy i dodaje przycisk 'Powrót' na dole layoutu (poniżej tabeli).
         """
         from PyQt5.QtWidgets import QPushButton
+
         # Używamy self.main_layout (lub fallback do centralWidget().layout())
         layout = self.main_layout
         if not layout and self.centralWidget():
@@ -57,14 +64,16 @@ class BaseCrudListScreen(BaseListScreen):
 
         if layout is not None:
             back_button = QPushButton("Powrót")
-            back_button.setStyleSheet("""
+            back_button.setStyleSheet(
+                """
                 background-color: #FFDAB9; /* pastelowy pomarańcz */
                 color: #8B4513;            /* brąz */
                 font-size: 14px;
                 font-weight: bold;
                 border-radius: 10px;
                 padding: 10px;
-            """)
+            """
+            )
             back_button.clicked.connect(self.go_back)
             layout.addWidget(back_button)
 
@@ -80,27 +89,31 @@ class BaseCrudListScreen(BaseListScreen):
 
     def create_edit_button(self, row: int) -> QPushButton:
         edit_button = QPushButton("Edytuj")
-        edit_button.setStyleSheet("""
+        edit_button.setStyleSheet(
+            """
             background-color: #007bff;
             color: #FFFFFF;
             font-size: 12px;
             font-weight: bold;
             border-radius: 8px;
             padding: 5px 10px;
-        """)
+        """
+        )
         edit_button.clicked.connect(lambda _, r=row: self.toggle_edit(r))
         return edit_button
 
     def create_delete_button(self, row: int) -> QPushButton:
         delete_button = QPushButton("Usuń")
-        delete_button.setStyleSheet("""
+        delete_button.setStyleSheet(
+            """
             background-color: #FFCCCC;
             color: #800000;
             font-size: 12px;
             font-weight: bold;
             border-radius: 8px;
             padding: 5px 10px;
-        """)
+        """
+        )
         delete_button.clicked.connect(lambda _, r=row: self.delete_record(r))
         return delete_button
 
@@ -161,9 +174,7 @@ class BaseCrudListScreen(BaseListScreen):
         item_id = int(item_id_item.text())
 
         confirm = QMessageBox.question(
-            self,
-            "Potwierdzenie",
-            f"Czy na pewno usunąć rekord ID={item_id}?"
+            self, "Potwierdzenie", f"Czy na pewno usunąć rekord ID={item_id}?"
         )
         if confirm == QMessageBox.Yes:
             try:

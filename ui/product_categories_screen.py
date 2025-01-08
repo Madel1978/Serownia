@@ -1,6 +1,13 @@
 from PyQt5.QtWidgets import (
-    QMainWindow, QVBoxLayout, QTableWidget, QTableWidgetItem, QPushButton,
-    QInputDialog, QMessageBox, QHBoxLayout, QWidget
+    QMainWindow,
+    QVBoxLayout,
+    QTableWidget,
+    QTableWidgetItem,
+    QPushButton,
+    QInputDialog,
+    QMessageBox,
+    QHBoxLayout,
+    QWidget,
 )
 from PyQt5.QtCore import Qt
 
@@ -26,41 +33,49 @@ class ProductCategoriesScreen(QMainWindow):
 
         # Przycisk: Dodaj kategorię
         add_button = QPushButton("Dodaj kategorię")
-        add_button.setStyleSheet("""
+        add_button.setStyleSheet(
+            """
             background-color: #ADD8E6;
             color: #000080;
             font-size: 14px;
             font-weight: bold;
             border-radius: 10px;
             padding: 10px;
-        """)
+        """
+        )
         add_button.clicked.connect(self.add_category)
         button_layout.addWidget(add_button)
 
         # Przycisk: Usuń kategorię (opcjonalny)
         remove_button = QPushButton("Usuń kategorię")
-        remove_button.setStyleSheet("""
+        remove_button.setStyleSheet(
+            """
             background-color: #FFDAB9;
             color: #8B4513;
             font-size: 14px;
             font-weight: bold;
             border-radius: 10px;
             padding: 10px;
-        """)
+        """
+        )
         remove_button.clicked.connect(self.remove_selected_category)
         button_layout.addWidget(remove_button)
 
         # Przycisk Powrót
         back_button = QPushButton("Powrót")
-        back_button.setStyleSheet("""
+        back_button.setStyleSheet(
+            """
             background-color: #FFCCCC;
             color: #800000;
             font-size: 14px;
             font-weight: bold;
             border-radius: 10px;
             padding: 10px;
-        """)
-        back_button.clicked.connect(lambda: self.parent.show_screen(self.parent.settings_screen))
+        """
+        )
+        back_button.clicked.connect(
+            lambda: self.parent.show_screen(self.parent.settings_screen)
+        )
         button_layout.addWidget(back_button)
 
         layout.addLayout(button_layout)
@@ -94,11 +109,15 @@ class ProductCategoriesScreen(QMainWindow):
 
     def add_category(self):
         """Dodaje nową kategorię."""
-        name, ok = QInputDialog.getText(self, "Dodaj kategorię", "Nazwa nowej kategorii:")
+        name, ok = QInputDialog.getText(
+            self, "Dodaj kategorię", "Nazwa nowej kategorii:"
+        )
         if ok and name.strip():
             try:
                 self.db_manager.add_product_category(name.strip())
-                QMessageBox.information(self, "Sukces", f"Kategoria '{name.strip()}' została dodana.")
+                QMessageBox.information(
+                    self, "Sukces", f"Kategoria '{name.strip()}' została dodana."
+                )
                 self.load_categories()
             except Exception as e:
                 QMessageBox.warning(self, "Błąd", f"Nie udało się dodać kategorii: {e}")
@@ -113,20 +132,22 @@ class ProductCategoriesScreen(QMainWindow):
             QMessageBox.warning(self, "Błąd", "Wybierz kategorię do usunięcia.")
             return
 
-        category_name = self.category_table.item(selected_row, 1).text()  # nazwa kategorii w kolumnie 1
+        category_name = self.category_table.item(
+            selected_row, 1
+        ).text()  # nazwa kategorii w kolumnie 1
         confirm = QMessageBox.question(
             self,
             "Potwierdzenie",
-            f"Czy na pewno chcesz usunąć kategorię '{category_name}'?"
+            f"Czy na pewno chcesz usunąć kategorię '{category_name}'?",
         )
         if confirm == QMessageBox.Yes:
             try:
                 self.db_manager.delete_product_category(category_name)
                 QMessageBox.information(
-                    self,
-                    "Sukces",
-                    f"Kategoria '{category_name}' została usunięta."
+                    self, "Sukces", f"Kategoria '{category_name}' została usunięta."
                 )
                 self.load_categories()
             except Exception as e:
-                QMessageBox.warning(self, "Błąd", f"Nie udało się usunąć kategorii: {e}")
+                QMessageBox.warning(
+                    self, "Błąd", f"Nie udało się usunąć kategorii: {e}"
+                )

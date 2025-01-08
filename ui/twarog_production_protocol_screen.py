@@ -1,7 +1,16 @@
 from typing import Optional, Any, List, Tuple
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QGroupBox, QLabel,
-    QLineEdit, QPushButton, QComboBox, QMessageBox, QScrollArea
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QGridLayout,
+    QGroupBox,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QComboBox,
+    QMessageBox,
+    QScrollArea,
 )
 from PyQt5.QtCore import Qt
 from datetime import date
@@ -17,14 +26,14 @@ def parse_dosage(dosage_str: str) -> Tuple[float, str]:
     if len(parts) == 1:
         # Np. "10"
         try:
-            val = float(parts[0].replace(',', '.'))
+            val = float(parts[0].replace(",", "."))
         except ValueError:
             val = 0.0
         return val, ""
     elif len(parts) >= 2:
         # Np. "17 ml", "30 g"
         try:
-            val = float(parts[0].replace(',', '.'))
+            val = float(parts[0].replace(",", "."))
         except ValueError:
             val = 0.0
         unit = parts[1]
@@ -46,9 +55,7 @@ class TwarogProductionProtocolScreen(QWidget):
     """
 
     def __init__(
-        self,
-        parent: Optional[Any] = None,
-        db_manager: Optional[DBManager] = None
+        self, parent: Optional[Any] = None, db_manager: Optional[DBManager] = None
     ):
         super().__init__(parent)
         self.parent = parent
@@ -58,7 +65,8 @@ class TwarogProductionProtocolScreen(QWidget):
         self.resize(800, 600)
 
         # Pastelowy styl
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             QWidget {
                 background-color: #FFF9FA; /* bardzo jasny róż */
             }
@@ -92,7 +100,8 @@ class TwarogProductionProtocolScreen(QWidget):
                 padding: 6px 12px;
                 font-weight: bold;
             }
-        """)
+        """
+        )
 
         # Aktualnie edytowany protokół (None => nowy)
         self.current_protocol_id: Optional[int] = None
@@ -121,7 +130,6 @@ class TwarogProductionProtocolScreen(QWidget):
         outer_layout = QVBoxLayout()
         outer_layout.addWidget(self.scroll_area)
         self.setLayout(outer_layout)
-
 
     # ----------------------------------------------------------------
     # A. PARAMETRY
@@ -173,7 +181,9 @@ class TwarogProductionProtocolScreen(QWidget):
         self.milkAmount_input = QLineEdit()
         self.milkAmount_input.setFixedWidth(field_width)
         self.milkAmount_input.setPlaceholderText("np. 50.0")
-        self.milkAmount_input.textChanged.connect(self.update_doses)  # przeliczanie dawek
+        self.milkAmount_input.textChanged.connect(
+            self.update_doses
+        )  # przeliczanie dawek
         grid.addWidget(lbl_amt, 4, 0)
         grid.addWidget(self.milkAmount_input, 4, 1)
 
@@ -241,7 +251,6 @@ class TwarogProductionProtocolScreen(QWidget):
             self.update_doses()
         else:
             self.clear_additives_fields()
-
 
     # ----------------------------------------------------------------
     # B. DODATKI – 6 wierszy, 3 kolumny (Kategoria, Dodatek, Dawka)
@@ -371,7 +380,7 @@ class TwarogProductionProtocolScreen(QWidget):
         lbl_empty1.setFixedWidth(label_width)
         lbl_kroj_time = QLabel("Godzina")
         lbl_kroj_temp = QLabel("Temperatura")
-        gridC.addWidget(lbl_empty1,    row, 0)
+        gridC.addWidget(lbl_empty1, row, 0)
         gridC.addWidget(lbl_kroj_time, row, 1)
         gridC.addWidget(lbl_kroj_temp, row, 2)
 
@@ -383,12 +392,12 @@ class TwarogProductionProtocolScreen(QWidget):
         # Zachowujemy dotychczasowe nazwy pól, jeśli tak masz w load/save
         self.krojenie_start_input = QLineEdit()
         self.krojenie_start_input.setFixedWidth(field_width)
-        self.krojenie_end_input   = QLineEdit()
+        self.krojenie_end_input = QLineEdit()
         self.krojenie_end_input.setFixedWidth(field_width)
 
-        gridC.addWidget(lbl_krojenie,             row, 0)
+        gridC.addWidget(lbl_krojenie, row, 0)
         gridC.addWidget(self.krojenie_start_input, row, 1)
-        gridC.addWidget(self.krojenie_end_input,   row, 2)
+        gridC.addWidget(self.krojenie_end_input, row, 2)
 
         # -------------------------------------------------------------
         # 2) DOGRZEWANIE: 2 wiersze
@@ -398,10 +407,10 @@ class TwarogProductionProtocolScreen(QWidget):
         lbl_empty2 = QLabel("")
         lbl_empty2.setFixedWidth(label_width)
         lbl_dogr_start = QLabel("Początek")
-        lbl_dogr_end   = QLabel("Koniec")
-        gridC.addWidget(lbl_empty2,     row, 0)
+        lbl_dogr_end = QLabel("Koniec")
+        gridC.addWidget(lbl_empty2, row, 0)
         gridC.addWidget(lbl_dogr_start, row, 1)
-        gridC.addWidget(lbl_dogr_end,   row, 2)
+        gridC.addWidget(lbl_dogr_end, row, 2)
 
         # Wiersz 2: ["Dogrzewanie", QLineEdit => dogrzewanie_start_input, QLineEdit => dogrzewanie_end_input]
         row += 1
@@ -409,12 +418,12 @@ class TwarogProductionProtocolScreen(QWidget):
         lbl_dogrzewanie.setFixedWidth(label_width)
         self.dogrzewanie_start_input = QLineEdit()
         self.dogrzewanie_start_input.setFixedWidth(field_width)
-        self.dogrzewanie_end_input   = QLineEdit()
+        self.dogrzewanie_end_input = QLineEdit()
         self.dogrzewanie_end_input.setFixedWidth(field_width)
 
-        gridC.addWidget(lbl_dogrzewanie,              row, 0)
+        gridC.addWidget(lbl_dogrzewanie, row, 0)
         gridC.addWidget(self.dogrzewanie_start_input, row, 1)
-        gridC.addWidget(self.dogrzewanie_end_input,   row, 2)
+        gridC.addWidget(self.dogrzewanie_end_input, row, 2)
 
         # -------------------------------------------------------------
         # 3) FORMY: 2 wiersze
@@ -423,24 +432,24 @@ class TwarogProductionProtocolScreen(QWidget):
         row += 1
         lbl_empty3 = QLabel("")
         lbl_empty3.setFixedWidth(label_width)
-        lbl_formy_ilosc  = QLabel("Ilość")
-        lbl_formy_wiel   = QLabel("Wielkość")
-        gridC.addWidget(lbl_empty3,      row, 0)
+        lbl_formy_ilosc = QLabel("Ilość")
+        lbl_formy_wiel = QLabel("Wielkość")
+        gridC.addWidget(lbl_empty3, row, 0)
         gridC.addWidget(lbl_formy_ilosc, row, 1)
-        gridC.addWidget(lbl_formy_wiel,  row, 2)
+        gridC.addWidget(lbl_formy_wiel, row, 2)
 
         # Wiersz 2: ["Formy", QLineEdit => formy_ilosc_input, QLineEdit => formy_wielkosc_input]
         row += 1
         lbl_formy = QLabel("Formy")
         lbl_formy.setFixedWidth(label_width)
-        self.formy_ilosc_input    = QLineEdit()
+        self.formy_ilosc_input = QLineEdit()
         self.formy_ilosc_input.setFixedWidth(field_width)
         self.formy_wielkosc_input = QLineEdit()
         self.formy_wielkosc_input.setFixedWidth(field_width)
 
-        gridC.addWidget(lbl_formy,                  row, 0)
-        gridC.addWidget(self.formy_ilosc_input,     row, 1)
-        gridC.addWidget(self.formy_wielkosc_input,  row, 2)
+        gridC.addWidget(lbl_formy, row, 0)
+        gridC.addWidget(self.formy_ilosc_input, row, 1)
+        gridC.addWidget(self.formy_wielkosc_input, row, 2)
 
         # -------------------------------------------------------------
         # 4) SOLENIE: 2 wiersze
@@ -450,10 +459,10 @@ class TwarogProductionProtocolScreen(QWidget):
         lbl_empty4 = QLabel("")
         lbl_empty4.setFixedWidth(label_width)
         lbl_sol_start = QLabel("Początek")
-        lbl_sol_end   = QLabel("Koniec")
-        gridC.addWidget(lbl_empty4,     row, 0)
-        gridC.addWidget(lbl_sol_start,  row, 1)
-        gridC.addWidget(lbl_sol_end,    row, 2)
+        lbl_sol_end = QLabel("Koniec")
+        gridC.addWidget(lbl_empty4, row, 0)
+        gridC.addWidget(lbl_sol_start, row, 1)
+        gridC.addWidget(lbl_sol_end, row, 2)
 
         # Wiersz 2: ["Solenie", QLineEdit => solenie_start_input, QLineEdit => solenie_end_input]
         row += 1
@@ -461,20 +470,18 @@ class TwarogProductionProtocolScreen(QWidget):
         lbl_solenie.setFixedWidth(label_width)
         self.solenie_start_input = QLineEdit()
         self.solenie_start_input.setFixedWidth(field_width)
-        self.solenie_end_input   = QLineEdit()
+        self.solenie_end_input = QLineEdit()
         self.solenie_end_input.setFixedWidth(field_width)
 
-        gridC.addWidget(lbl_solenie,              row, 0)
+        gridC.addWidget(lbl_solenie, row, 0)
         gridC.addWidget(self.solenie_start_input, row, 1)
-        gridC.addWidget(self.solenie_end_input,   row, 2)
+        gridC.addWidget(self.solenie_end_input, row, 2)
 
         # -------------------------------------------------------------
         # Przypisujemy layout do groupC i dodajemy do głównego layoutu
         # -------------------------------------------------------------
         groupC.setLayout(gridC)
         self.main_layout.addWidget(groupC)
-
-
 
     # ----------------------------------------------------------------
     # D. Ewidencja partii (15 wierszy)
@@ -518,7 +525,6 @@ class TwarogProductionProtocolScreen(QWidget):
 
         groupD.setLayout(vlayout)
         self.main_layout.addWidget(groupD)
-
 
     # ----------------------------------------------------------------
     # Dolne przyciski (Powrót / Zapisz)
@@ -582,7 +588,7 @@ class TwarogProductionProtocolScreen(QWidget):
             self.solenie_end_input.clear()
 
             # Sekcja D (partie)
-            for (part_edit, weight_edit, comment_edit) in self.parties_lines:
+            for part_edit, weight_edit, comment_edit in self.parties_lines:
                 part_edit.clear()
                 weight_edit.clear()
                 comment_edit.clear()
@@ -590,7 +596,7 @@ class TwarogProductionProtocolScreen(QWidget):
             # Combo 'Wybierz...' w product_combo
             if self.product_combo.count() > 0:
                 # -- (A) Wybieramy domyślnie "Ser twarogowy" (jeśli istnieje w comboboxie)
-                default_prod_name = "Ser twarogowy"  
+                default_prod_name = "Ser twarogowy"
                 idx_twarog = self.product_combo.findText(default_prod_name)
                 if idx_twarog < 0:
                     # Jeśli nie znaleziono, weź pierwszy
@@ -609,14 +615,16 @@ class TwarogProductionProtocolScreen(QWidget):
                 # nie możemy nic wypełnić.
                 self.clear_additives_fields()
 
-            print(">>> Nowy protokół (Twarog) => wyczyszczono pola, wypełniono domyślnie dodatki (o ile były).")
+            print(
+                ">>> Nowy protokół (Twarog) => wyczyszczono pola, wypełniono domyślnie dodatki (o ile były)."
+            )
             return
 
         # -------------------------------------------------------
         # ISTNIEJĄCY protokół (record_data != None)
         # -------------------------------------------------------
         self.current_protocol_id = record_data.get("id", None)
-        date_str   = record_data.get("date", "")
+        date_str = record_data.get("date", "")
         series_str = record_data.get("series", "")
         product_id = record_data.get("product_id", None)
 
@@ -637,7 +645,7 @@ class TwarogProductionProtocolScreen(QWidget):
                 QMessageBox.warning(
                     self,
                     "Uwaga",
-                    f"Produkt o ID={product_id} nie istnieje w bazie. Ustawiam pierwszy z listy."
+                    f"Produkt o ID={product_id} nie istnieje w bazie. Ustawiam pierwszy z listy.",
                 )
             if self.product_combo.count() > 0:
                 self.product_combo.setCurrentIndex(0)
@@ -646,7 +654,9 @@ class TwarogProductionProtocolScreen(QWidget):
         # Wczytujemy szczegóły z tabeli twarog_production_details
         # -------------------------------------------------------
         if self.db_manager and self.current_protocol_id is not None:
-            details = self.db_manager.get_twarog_production_details(self.current_protocol_id)
+            details = self.db_manager.get_twarog_production_details(
+                self.current_protocol_id
+            )
             if details:
                 amt_str = details.get("milk_amount", "")
                 self.milkAmount_input.setText(amt_str)
@@ -669,7 +679,9 @@ class TwarogProductionProtocolScreen(QWidget):
                 # Sekcja C
                 self.krojenie_start_input.setText(details.get("krojenie_start", ""))
                 self.krojenie_end_input.setText(details.get("krojenie_end", ""))
-                self.dogrzewanie_start_input.setText(details.get("dogrzewanie_start", ""))
+                self.dogrzewanie_start_input.setText(
+                    details.get("dogrzewanie_start", "")
+                )
                 self.dogrzewanie_end_input.setText(details.get("dogrzewanie_end", ""))
                 self.formy_wielkosc_input.setText(details.get("formy_wielkosc", ""))
                 self.formy_ilosc_input.setText(details.get("formy_ilosc", ""))
@@ -698,11 +710,15 @@ class TwarogProductionProtocolScreen(QWidget):
         # ------------------------------------------------------------
         if product_id and self.db_manager:
             try:
-                lines = self.db_manager.get_ser_production_additives_for_record(self.current_protocol_id)
+                lines = self.db_manager.get_ser_production_additives_for_record(
+                    self.current_protocol_id
+                )
             except AttributeError:
                 # Metoda nie istnieje => brak możliwości wczytania
                 lines = []
-                print("UWAGA: Brak metody get_ser_production_additives_for_record w DBManager.")
+                print(
+                    "UWAGA: Brak metody get_ser_production_additives_for_record w DBManager."
+                )
 
             # Czyścimy pola
             self.clear_additives_fields()
@@ -711,8 +727,8 @@ class TwarogProductionProtocolScreen(QWidget):
             for i, row in enumerate(lines):
                 if i >= len(self.additive_lines):
                     break
-                cat_str  = row.get("additive_category", "")
-                add_str  = row.get("additive_name", "")
+                cat_str = row.get("additive_category", "")
+                add_str = row.get("additive_name", "")
                 dose_str = row.get("dose_calculated", "")
 
                 base_val, unit = parse_dosage(dose_str)
@@ -723,9 +739,10 @@ class TwarogProductionProtocolScreen(QWidget):
                 add_edit.setText(add_str)
                 dose_edit.setText(dose_str)
 
-        print(f">>> Twarog load_from_record: ID={self.current_protocol_id}, "
-            f"date={date_str}, series={series_str}, product_id={product_id}")
-
+        print(
+            f">>> Twarog load_from_record: ID={self.current_protocol_id}, "
+            f"date={date_str}, series={series_str}, product_id={product_id}"
+        )
 
     def save_protocol(self) -> None:
         """
@@ -738,20 +755,24 @@ class TwarogProductionProtocolScreen(QWidget):
             QMessageBox.warning(self, "Błąd", "Brak db_manager – nie można zapisać.")
             return
 
-        product_id  = self.product_combo.currentData()
-        date_str    = self.date_input.text().strip()
-        series_str  = self.series_input.text().strip()
+        product_id = self.product_combo.currentData()
+        date_str = self.date_input.text().strip()
+        series_str = self.series_input.text().strip()
 
         milk_type_str = self.milkType_combo.currentText().strip()
-        amt_str       = self.milkAmount_input.text().strip()
-        ph_str        = self.ph_input.text().strip()
-        pasteur_str   = self.pasteur_combo.currentText().strip()
+        amt_str = self.milkAmount_input.text().strip()
+        ph_str = self.ph_input.text().strip()
+        pasteur_str = self.pasteur_combo.currentText().strip()
 
         if not date_str or not series_str or not amt_str:
-            QMessageBox.warning(self, "Błąd", "Uzupełnij datę, numer serii i ilość mleka.")
+            QMessageBox.warning(
+                self, "Błąd", "Uzupełnij datę, numer serii i ilość mleka."
+            )
             return
         if product_id is None or product_id == -1:
-            QMessageBox.warning(self, "Błąd", "Nie wybrano poprawnego produktu (Ser Twarogowy).")
+            QMessageBox.warning(
+                self, "Błąd", "Nie wybrano poprawnego produktu (Ser Twarogowy)."
+            )
             return
         try:
             float(amt_str)
@@ -761,13 +782,13 @@ class TwarogProductionProtocolScreen(QWidget):
 
         # Sekcja C
         kroj_start_str = self.krojenie_start_input.text().strip()
-        kroj_end_str   = self.krojenie_end_input.text().strip()
+        kroj_end_str = self.krojenie_end_input.text().strip()
         dogr_start_str = self.dogrzewanie_start_input.text().strip()
-        dogr_end_str   = self.dogrzewanie_end_input.text().strip()
-        formy_w_str    = self.formy_wielkosc_input.text().strip()
-        formy_i_str    = self.formy_ilosc_input.text().strip()
-        sol_start_str  = self.solenie_start_input.text().strip()
-        sol_end_str    = self.solenie_end_input.text().strip()
+        dogr_end_str = self.dogrzewanie_end_input.text().strip()
+        formy_w_str = self.formy_wielkosc_input.text().strip()
+        formy_i_str = self.formy_ilosc_input.text().strip()
+        sol_start_str = self.solenie_start_input.text().strip()
+        sol_end_str = self.solenie_end_input.text().strip()
 
         try:
             if self.current_protocol_id is None:
@@ -789,21 +810,18 @@ class TwarogProductionProtocolScreen(QWidget):
                     formy_wielkosc=formy_w_str,
                     formy_ilosc=formy_i_str,
                     solenie_start=sol_start_str,
-                    solenie_end=sol_end_str
+                    solenie_end=sol_end_str,
                 )
                 self.current_protocol_id = new_id
                 QMessageBox.information(
                     self,
                     "Sukces",
-                    f"Protokół (Ser Twarogowy) '{series_str}' zapisany (NOWY)."
+                    f"Protokół (Ser Twarogowy) '{series_str}' zapisany (NOWY).",
                 )
             else:
                 # EDYCJA
                 self.db_manager.update_production_record(
-                    self.current_protocol_id,
-                    date_str,
-                    series_str,
-                    product_id
+                    self.current_protocol_id, date_str, series_str, product_id
                 )
                 self.db_manager.update_twarog_production_details(
                     production_record_id=self.current_protocol_id,
@@ -818,33 +836,29 @@ class TwarogProductionProtocolScreen(QWidget):
                     formy_wielkosc=formy_w_str,
                     formy_ilosc=formy_i_str,
                     solenie_start=sol_start_str,
-                    solenie_end=sol_end_str
+                    solenie_end=sol_end_str,
                 )
                 QMessageBox.information(
                     self,
                     "Sukces",
-                    f"Zaktualizowano protokół (Ser Twarogowy) '{series_str}' (ID={self.current_protocol_id})."
+                    f"Zaktualizowano protokół (Ser Twarogowy) '{series_str}' (ID={self.current_protocol_id}).",
                 )
 
             # Dodatki
             record_id = self.current_protocol_id
             self.db_manager.clear_ser_production_additives_for_record(record_id)
-            for (cat_edit, add_edit, dose_edit) in self.additive_lines:
-                cat_str  = cat_edit.text().strip()
-                add_str  = add_edit.text().strip()
+            for cat_edit, add_edit, dose_edit in self.additive_lines:
+                cat_str = cat_edit.text().strip()
+                add_str = add_edit.text().strip()
                 dose_val = dose_edit.text().strip()
                 if not cat_str and not add_str and not dose_val:
                     continue
                 self.db_manager.add_ser_production_additive_3col(
-                    record_id,
-                    cat_str,
-                    add_str,
-                    dose_val
+                    record_id, cat_str, add_str, dose_val
                 )
 
         except Exception as e:
             QMessageBox.warning(self, "Błąd", f"Nie udało się zapisać protokołu: {e}")
-
 
     def update_doses(self):
         """
@@ -874,7 +888,7 @@ class TwarogProductionProtocolScreen(QWidget):
         """
         Czyści wartości w kolumnie 'Dawka'.
         """
-        for (cat_edit, add_edit, dose_edit) in self.additive_lines:
+        for cat_edit, add_edit, dose_edit in self.additive_lines:
             dose_edit.clear()
 
     def generate_series_number(self) -> str:

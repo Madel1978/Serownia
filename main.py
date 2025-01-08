@@ -2,8 +2,12 @@ import sys
 from typing import Optional, List
 
 from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QStackedWidget, QLabel,
-    QPushButton, QToolBar
+    QApplication,
+    QMainWindow,
+    QStackedWidget,
+    QLabel,
+    QPushButton,
+    QToolBar,
 )
 from PyQt5.QtCore import Qt
 
@@ -89,7 +93,9 @@ class MainWindow(QMainWindow):
 
         # Ekrany logowania / rejestracji / start
         self.login_screen = LoginScreen(parent=self, db_manager=self.db_manager)
-        self.registration_screen = RegistrationScreen(parent=self, db_manager=self.db_manager)
+        self.registration_screen = RegistrationScreen(
+            parent=self, db_manager=self.db_manager
+        )
         self.start_screen = StartScreen(parent=self)
 
         # Ekrany funkcyjne
@@ -100,40 +106,70 @@ class MainWindow(QMainWindow):
         self.raporty_screen = RaportyScreen(parent=self)
 
         # Najpierw ekrany list, z których jeden będzie używany przez base_list_screen:
-        self.packaging_list_screen = PackagingListScreen(parent=self, db_manager=self.db_manager)
-        print(f"[DEBUG] packaging_list_screen = {self.packaging_list_screen}, id={id(self.packaging_list_screen)}")
-        self.packaging_register_screen = PackagingRegisterScreen(parent=self, db_manager=self.db_manager)
-        self.additives_register_screen = AdditivesRegisterScreen(parent=self, db_manager=self.db_manager)
-        self.additives_list_screen = AdditivesListScreen(parent=self, db_manager=self.db_manager)
-        self.products_list_screen = ProductsListScreen(parent=self, db_manager=self.db_manager)
-        print(f"[DEBUG] products_list_screen  = {self.products_list_screen}, id={id(self.products_list_screen)}")
+        self.packaging_list_screen = PackagingListScreen(
+            parent=self, db_manager=self.db_manager
+        )
+        print(
+            f"[DEBUG] packaging_list_screen = {self.packaging_list_screen}, id={id(self.packaging_list_screen)}"
+        )
+        self.packaging_register_screen = PackagingRegisterScreen(
+            parent=self, db_manager=self.db_manager
+        )
+        self.additives_register_screen = AdditivesRegisterScreen(
+            parent=self, db_manager=self.db_manager
+        )
+        self.additives_list_screen = AdditivesListScreen(
+            parent=self, db_manager=self.db_manager
+        )
+        self.products_list_screen = ProductsListScreen(
+            parent=self, db_manager=self.db_manager
+        )
+        print(
+            f"[DEBUG] products_list_screen  = {self.products_list_screen}, id={id(self.products_list_screen)}"
+        )
 
         # Następnie klasa bazowa, jeśli chcemy z niej korzystać w interfejsie
         self.base_list_screen = BaseListScreen(
             parent=self,
             title="BaseListScreen (Uniwersalny)",
-            columns=["Kol1", "Kol2", "Kol3"]
+            columns=["Kol1", "Kol2", "Kol3"],
         )
-        # Kluczowe: 
+        # Kluczowe:
         # Metoda apply_filter() w base_list_screen pozwala wyszukiwać w products_list_screen
         self.base_list_screen.products_list_screen = self.products_list_screen
 
         # CRUD kategorie
-        self.packaging_categories_crud_screen = PackagingCategoriesCrudScreen(parent=self, db_manager=self.db_manager)
-        self.product_categories_crud_screen = ProductCategoriesCrudScreen(parent=self, db_manager=self.db_manager)
-        self.product_composition_screen = ProductCompositionScreen(parent=self, db_manager=self.db_manager)
-        self.additive_categories_crud_screen = AdditiveCategoriesCrudScreen(parent=self, db_manager=self.db_manager)
+        self.packaging_categories_crud_screen = PackagingCategoriesCrudScreen(
+            parent=self, db_manager=self.db_manager
+        )
+        self.product_categories_crud_screen = ProductCategoriesCrudScreen(
+            parent=self, db_manager=self.db_manager
+        )
+        self.product_composition_screen = ProductCompositionScreen(
+            parent=self, db_manager=self.db_manager
+        )
+        self.additive_categories_crud_screen = AdditiveCategoriesCrudScreen(
+            parent=self, db_manager=self.db_manager
+        )
 
         # Nowa Produkcja (kafelki)
         self.new_production_screen = NewProductionScreen(parent=self)
 
         # Protokoły
-        self.ser_production_protocol_screen = SerProductionProtocolScreen(parent=self, db_manager=self.db_manager)
-        self.fermented_production_protocol_screen = FermentedProductionProtocolScreen(parent=self, db_manager=self.db_manager)
-        self.twarog_production_protocol_screen = TwarogProductionProtocolScreen(parent=self, db_manager=self.db_manager)
+        self.ser_production_protocol_screen = SerProductionProtocolScreen(
+            parent=self, db_manager=self.db_manager
+        )
+        self.fermented_production_protocol_screen = FermentedProductionProtocolScreen(
+            parent=self, db_manager=self.db_manager
+        )
+        self.twarog_production_protocol_screen = TwarogProductionProtocolScreen(
+            parent=self, db_manager=self.db_manager
+        )
 
         # Baza Produkcji (lista protokołów)
-        self.production_list_screen = ProductionListScreen(parent=self, db_manager=self.db_manager)
+        self.production_list_screen = ProductionListScreen(
+            parent=self, db_manager=self.db_manager
+        )
 
         # ----------------------------------------------------------
         # 2) Dodajemy ekrany do QStackedWidget
@@ -180,13 +216,15 @@ class MainWindow(QMainWindow):
         self.addToolBar(Qt.TopToolBarArea, self.toolbar)
         self.toolbar.addWidget(self.user_label)
 
-        self.logout_button.setStyleSheet("""
+        self.logout_button.setStyleSheet(
+            """
             background-color: #FFCCCC;
             color: #800000;
             font-size: 12px;
             border-radius: 10px;
             padding: 5px 10px;
-        """)
+        """
+        )
         self.toolbar.addWidget(self.logout_button)
         self.toolbar.hide()
 

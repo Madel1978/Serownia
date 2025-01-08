@@ -1,11 +1,10 @@
 from typing import Optional, Any, List, Dict
-from PyQt5.QtWidgets import (
-    QLineEdit, QTableWidgetItem, QMessageBox, QPushButton
-)
+from PyQt5.QtWidgets import QLineEdit, QTableWidgetItem, QMessageBox, QPushButton
 from PyQt5.QtCore import Qt, QEvent
 
 from ui.base_crud_list_screen import BaseCrudListScreen
 from database.db_manager import DBManager
+
 
 class ProductionListScreen(BaseCrudListScreen):
     """
@@ -18,9 +17,7 @@ class ProductionListScreen(BaseCrudListScreen):
     """
 
     def __init__(
-        self,
-        parent: Optional[Any] = None,
-        db_manager: Optional[DBManager] = None
+        self, parent: Optional[Any] = None, db_manager: Optional[DBManager] = None
     ) -> None:
         print(">>> ProductionListScreen: constructor START")
         self.db_manager = db_manager
@@ -34,8 +31,8 @@ class ProductionListScreen(BaseCrudListScreen):
                 "Numer serii",
                 "Produkt",
                 "Otwórz / Edytuj",
-                "Usuń"
-            ]
+                "Usuń",
+            ],
         )
         self.hide_import_and_new_buttons()
         print(">>> ProductionListScreen: constructor END")
@@ -44,7 +41,9 @@ class ProductionListScreen(BaseCrudListScreen):
         """
         Nadpisujemy, aby NIE tworzyć przycisków „Importuj” i „Nowy”.
         """
-        print(">>> ProductionListScreen: create_toolbar_buttons => brak przycisków Importuj/Nowy.")
+        print(
+            ">>> ProductionListScreen: create_toolbar_buttons => brak przycisków Importuj/Nowy."
+        )
 
     def showEvent(self, event: QEvent) -> None:
         super().showEvent(event)
@@ -73,7 +72,9 @@ class ProductionListScreen(BaseCrudListScreen):
         """
         print(">>> ProductionListScreen.load_data_with_filter() START")
         if not self.db_manager:
-            QMessageBox.warning(self, "Błąd", "Brak db_manager – nie można załadować protokołów.")
+            QMessageBox.warning(
+                self, "Błąd", "Brak db_manager – nie można załadować protokołów."
+            )
             return
 
         self.table.setRowCount(0)
@@ -147,31 +148,35 @@ class ProductionListScreen(BaseCrudListScreen):
             rows = cursor.fetchall()
             results = []
             for row in rows:
-                results.append({
-                    "id": row[0],
-                    "date": row[1],
-                    "series": row[2],
-                    "product_id": row[3],
-                    "product_name": row[4],
-                })
+                results.append(
+                    {
+                        "id": row[0],
+                        "date": row[1],
+                        "series": row[2],
+                        "product_id": row[3],
+                        "product_name": row[4],
+                    }
+                )
             return results
 
     def create_open_edit_button(self, row_index: int) -> QPushButton:
         btn = QPushButton("Otwórz / Edytuj")
-        btn.setStyleSheet("""
+        btn.setStyleSheet(
+            """
             background-color: #ADD8E6;
             font-size: 12px;
             border-radius: 8px;
             padding: 5px 10px;
-        """)
+        """
+        )
         btn.clicked.connect(lambda _: self.open_edit_protocol(row_index))
         return btn
 
     def open_edit_protocol(self, row_index: int) -> None:
         """
         Obsługa przycisku „Otwórz/Edytuj”.
-        Pobieramy ID protokołu z tabeli. Sprawdzamy kategorię produktu i 
-        sięgamy do parent's protocol_screens_by_name[cat_name], 
+        Pobieramy ID protokołu z tabeli. Sprawdzamy kategorię produktu i
+        sięgamy do parent's protocol_screens_by_name[cat_name],
         tak jak w new_production_screen, zamiast if-else.
         """
         print(f">>> open_edit_protocol(row_index={row_index})")
@@ -185,19 +190,24 @@ class ProductionListScreen(BaseCrudListScreen):
         # Pobierz production_record + product_id
         record_data = self.get_production_record_by_id(record_id)
         if not record_data:
-            QMessageBox.warning(self, "Błąd", f"Nie znaleziono protokołu o ID={record_id}.")
+            QMessageBox.warning(
+                self, "Błąd", f"Nie znaleziono protokołu o ID={record_id}."
+            )
             return
 
         product_id = record_data.get("product_id", None)
         if not product_id:
-            QMessageBox.warning(self, "Błąd", f"Protokół ID={record_id} nie ma product_id.")
+            QMessageBox.warning(
+                self, "Błąd", f"Protokół ID={record_id} nie ma product_id."
+            )
             return
 
         product_info = self.db_manager.get_product_by_id(product_id)
         if not product_info:
             QMessageBox.warning(
-                self, "Uwaga",
-                f"Produkt o ID={product_id} nie istnieje w bazie. Ustawiam pierwszy z listy."
+                self,
+                "Uwaga",
+                f"Produkt o ID={product_id} nie istnieje w bazie. Ustawiam pierwszy z listy.",
             )
             return
 
@@ -217,7 +227,7 @@ class ProductionListScreen(BaseCrudListScreen):
             QMessageBox.information(
                 self,
                 "Brak ekranu",
-                "MainWindow nie ma słownika 'protocol_screens_by_name'."
+                "MainWindow nie ma słownika 'protocol_screens_by_name'.",
             )
             return
 
@@ -228,16 +238,14 @@ class ProductionListScreen(BaseCrudListScreen):
             QMessageBox.information(
                 self,
                 "Brak ekranu",
-                f"Nie zaimplementowano protokołu dla kategorii '{cat_name_str}'."
+                f"Nie zaimplementowano protokołu dla kategorii '{cat_name_str}'.",
             )
             return
 
         # Wczytujemy do protokołu:
         if not hasattr(protocol_screen, "load_from_record"):
             QMessageBox.warning(
-                self,
-                "Błąd",
-                f"Ekran protokołu nie ma metody 'load_from_record'."
+                self, "Błąd", f"Ekran protokołu nie ma metody 'load_from_record'."
             )
             return
 
@@ -292,7 +300,7 @@ class ProductionListScreen(BaseCrudListScreen):
             "Potwierdzenie usunięcia",
             f"Czy na pewno chcesz USUNĄĆ protokół (ID={item_id})?\nOperacja nieodwracalna!",
             QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
+            QMessageBox.No,
         )
         if reply == QMessageBox.No:
             return
@@ -307,10 +315,12 @@ class ProductionListScreen(BaseCrudListScreen):
 
                 conn.commit()
 
-            QMessageBox.information(self, "Info", f"Protokół (ID={item_id}) został usunięty.")
+            QMessageBox.information(
+                self, "Info", f"Protokół (ID={item_id}) został usunięty."
+            )
         except Exception as e:
             QMessageBox.warning(self, "Błąd", f"Nie udało się usunąć protokołu: {e}")
-            
+
     def clear_filter(self) -> None:
         """
         Nadpisujemy, bo chcemy wczytać CAŁĄ listę protokołów (bez filtra).

@@ -1,15 +1,20 @@
 from typing import Optional, Any
 
 from PyQt5.QtWidgets import (
-    QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton,
-    QMessageBox, QComboBox
+    QDialog,
+    QVBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QMessageBox,
+    QComboBox,
 )
 from PyQt5.QtCore import Qt
 
 
 class AddAdditiveDialog(QDialog):
     """
-    Dialog umożliwiający dodanie nowego dodatku. 
+    Dialog umożliwiający dodanie nowego dodatku.
     W tej zmodyfikowanej wersji usunięto pola „Waga” i „Dawkowanie”,
     tak aby zapisywać tylko nazwę dodatku oraz kategorię.
     """
@@ -17,7 +22,7 @@ class AddAdditiveDialog(QDialog):
     def __init__(
         self,
         parent: Optional[Any] = None,  # Najczęściej QMainWindow lub inny widok-rodzic
-        db_manager: Optional[Any] = None  # Docelowo: Optional[DBManager]
+        db_manager: Optional[Any] = None,  # Docelowo: Optional[DBManager]
     ) -> None:
         """
         Inicjalizuje dialog do dodania nowego dodatku (bez wagi i dawkowania).
@@ -62,9 +67,7 @@ class AddAdditiveDialog(QDialog):
         """
         if not self.db_manager:
             QMessageBox.critical(
-                self,
-                "Błąd",
-                "Brak db_manager – nie można wczytać kategorii."
+                self, "Błąd", "Brak db_manager – nie można wczytać kategorii."
             )
             return
 
@@ -77,15 +80,13 @@ class AddAdditiveDialog(QDialog):
         Zapisuje dane (nazwa, kategoria_id) w bazie,
         wywołując db_manager.add_additive(...) z pustymi wartościami
         dla 'weight' i 'dosage', skoro nie są już potrzebne.
-        
+
         Przy sukcesie wyświetla komunikat i zamyka dialog z QDialog.Accepted;
         w razie błędu pokazuje QMessageBox.
         """
         if not self.db_manager:
             QMessageBox.critical(
-                self,
-                "Błąd",
-                "Brak db_manager – nie można dodać dodatku."
+                self, "Błąd", "Brak db_manager – nie można dodać dodatku."
             )
             return
 
@@ -96,23 +97,21 @@ class AddAdditiveDialog(QDialog):
 
         # Pobranie id wybranej kategorii
         selected_index = self.category_combo.currentIndex()
-        category_id = self.category_combo.itemData(selected_index) if selected_index >= 0 else None
+        category_id = (
+            self.category_combo.itemData(selected_index)
+            if selected_index >= 0
+            else None
+        )
 
         # Ponieważ usunęliśmy pola 'Waga' i 'Dawkowanie', przekazujemy puste ciągi.
         weight_placeholder = ""
         dosage_placeholder = ""
 
         try:
-            self.db_manager.add_additive(name, weight_placeholder, dosage_placeholder, category_id)
-            QMessageBox.information(
-                self,
-                "Sukces",
-                f"Dodatek '{name}' został dodany."
+            self.db_manager.add_additive(
+                name, weight_placeholder, dosage_placeholder, category_id
             )
+            QMessageBox.information(self, "Sukces", f"Dodatek '{name}' został dodany.")
             self.accept()  # zamyka dialog z kodem QDialog.Accepted
         except Exception as e:
-            QMessageBox.warning(
-                self,
-                "Błąd",
-                f"Nie udało się dodać dodatku: {e}"
-            )
+            QMessageBox.warning(self, "Błąd", f"Nie udało się dodać dodatku: {e}")

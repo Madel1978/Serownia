@@ -1,8 +1,15 @@
 from typing import Optional, List, Dict, Any
 
 from PyQt5.QtWidgets import (
-    QMainWindow, QVBoxLayout, QTableWidget, QTableWidgetItem,
-    QPushButton, QInputDialog, QMessageBox, QHBoxLayout, QWidget
+    QMainWindow,
+    QVBoxLayout,
+    QTableWidget,
+    QTableWidgetItem,
+    QPushButton,
+    QInputDialog,
+    QMessageBox,
+    QHBoxLayout,
+    QWidget,
 )
 from PyQt5.QtCore import Qt
 
@@ -19,7 +26,7 @@ class PackagingCategoriesScreen(QMainWindow):
     def __init__(
         self,
         parent: Optional[QMainWindow] = None,
-        db_manager: Optional[Any] = None  # docelowo: Optional[DBManager]
+        db_manager: Optional[Any] = None,  # docelowo: Optional[DBManager]
     ) -> None:
         """
         Inicjalizuje ekran "Kategorie Opakowań", zawierający tabelę
@@ -47,29 +54,35 @@ class PackagingCategoriesScreen(QMainWindow):
         button_layout = QHBoxLayout()
 
         add_button = QPushButton("Dodaj kategorię")
-        add_button.setStyleSheet("""
+        add_button.setStyleSheet(
+            """
             background-color: #ADD8E6;
             color: #000080;
             font-size: 14px;
             font-weight: bold;
             border-radius: 10px;
             padding: 10px;
-        """)
+        """
+        )
         add_button.clicked.connect(self.add_category)
         button_layout.addWidget(add_button)
 
         back_button = QPushButton("Powrót")
-        back_button.setStyleSheet("""
+        back_button.setStyleSheet(
+            """
             background-color: #FFCCCC;
             color: #800000;
             font-size: 14px;
             font-weight: bold;
             border-radius: 10px;
             padding: 10px;
-        """)
-        # Możesz zastosować jednolite podejście _navigate_to_screen("settings_screen"), 
+        """
+        )
+        # Możesz zastosować jednolite podejście _navigate_to_screen("settings_screen"),
         # jeśli masz taką metodę w parent
-        back_button.clicked.connect(lambda: self.parent.show_screen(self.parent.settings_screen))
+        back_button.clicked.connect(
+            lambda: self.parent.show_screen(self.parent.settings_screen)
+        )
         button_layout.addWidget(back_button)
 
         layout.addLayout(button_layout)
@@ -83,11 +96,15 @@ class PackagingCategoriesScreen(QMainWindow):
         Ładuje kategorie opakowań z bazy i wypełnia tabelę (self.category_table).
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można załadować kategorii.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można załadować kategorii."
+            )
             return
 
         self.category_table.setRowCount(0)
-        categories = self.db_manager.get_packaging_categories()  # Zakładamy istnienie tej metody w db_manager
+        categories = (
+            self.db_manager.get_packaging_categories()
+        )  # Zakładamy istnienie tej metody w db_manager
 
         # Wypełniamy tabelę wierszami
         for i, cat in enumerate(categories):
@@ -119,15 +136,21 @@ class PackagingCategoriesScreen(QMainWindow):
         Wyświetla QInputDialog, pobiera nazwę i dodaje do bazy.
         """
         if not self.db_manager:
-            QMessageBox.critical(self, "Błąd", "Brak db_manager – nie można dodać kategorii.")
+            QMessageBox.critical(
+                self, "Błąd", "Brak db_manager – nie można dodać kategorii."
+            )
             return
 
-        name, ok = QInputDialog.getText(self, "Dodaj kategorię", "Nazwa nowej kategorii:")
+        name, ok = QInputDialog.getText(
+            self, "Dodaj kategorię", "Nazwa nowej kategorii:"
+        )
         if ok and name.strip():
             name_str = name.strip()
             try:
                 self.db_manager.add_packaging_category(name_str)
-                QMessageBox.information(self, "Sukces", f"Kategoria '{name_str}' została dodana.")
+                QMessageBox.information(
+                    self, "Sukces", f"Kategoria '{name_str}' została dodana."
+                )
                 self.load_categories()  # odświeżamy tabelę
             except Exception as e:
                 QMessageBox.warning(self, "Błąd", f"Nie udało się dodać kategorii: {e}")

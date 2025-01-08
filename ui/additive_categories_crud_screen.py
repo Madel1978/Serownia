@@ -3,9 +3,7 @@
 from typing import Optional, Any, List
 import sqlite3  # Możliwe, że używasz do łapania IntegrityError
 
-from PyQt5.QtWidgets import (
-    QLineEdit, QTableWidgetItem, QMessageBox, QInputDialog
-)
+from PyQt5.QtWidgets import QLineEdit, QTableWidgetItem, QMessageBox, QInputDialog
 from PyQt5.QtCore import Qt
 
 from ui.base_crud_list_screen import BaseCrudListScreen
@@ -24,8 +22,8 @@ class AdditiveCategoriesCrudScreen(BaseCrudListScreen):
 
     def __init__(
         self,
-        parent: Optional[Any] = None,   # najczęściej QMainWindow
-        db_manager: Optional[Any] = None  # docelowo: DBManager
+        parent: Optional[Any] = None,  # najczęściej QMainWindow
+        db_manager: Optional[Any] = None,  # docelowo: DBManager
     ) -> None:
         """
         Ustawiamy kolumny: [ID, Nazwa kategorii, Edytuj/Zapisz, Usuń].
@@ -34,7 +32,7 @@ class AdditiveCategoriesCrudScreen(BaseCrudListScreen):
         super().__init__(
             parent=parent,
             title="Kategorie Dodatków (CRUD)",
-            columns=["ID", "Nazwa kategorii", "Edytuj/Zapisz", "Usuń"]
+            columns=["ID", "Nazwa kategorii", "Edytuj/Zapisz", "Usuń"],
         )
 
     def load_data(self, filter_text: str = "") -> None:
@@ -49,7 +47,9 @@ class AdditiveCategoriesCrudScreen(BaseCrudListScreen):
          - 2: Edytuj/Zapisz (przycisk)
          - 3: Usuń (przycisk)
         """
-        print(f"[DEBUG] AdditiveCategoriesCrudScreen.load_data(filter_text='{filter_text}')")
+        print(
+            f"[DEBUG] AdditiveCategoriesCrudScreen.load_data(filter_text='{filter_text}')"
+        )
 
         if not self.db_manager:
             QMessageBox.critical(self, "Błąd", "Brak db_manager.")
@@ -58,17 +58,18 @@ class AdditiveCategoriesCrudScreen(BaseCrudListScreen):
         self.table.setRowCount(0)
 
         # 1. Pobieramy wszystkie kategorie dodatków
-        categories = self.db_manager.get_categories()  # np. [{"id":1, "name":"Kultury starterowe"}, ...]
+        categories = (
+            self.db_manager.get_categories()
+        )  # np. [{"id":1, "name":"Kultury starterowe"}, ...]
 
         # 2. (Opcjonalne) filtrowanie w Pythonie
         ft_lower = filter_text.strip().lower()
         if ft_lower:
-            categories = [
-                c for c in categories
-                if ft_lower in c["name"].lower()
-            ]
+            categories = [c for c in categories if ft_lower in c["name"].lower()]
 
-        print(f"[DEBUG] Znaleziono {len(categories)} kategorii (po filtrze='{filter_text}')")
+        print(
+            f"[DEBUG] Znaleziono {len(categories)} kategorii (po filtrze='{filter_text}')"
+        )
 
         # 3. Wstawiamy dane do tabeli
         for row_index, cat in enumerate(categories):
@@ -104,22 +105,18 @@ class AdditiveCategoriesCrudScreen(BaseCrudListScreen):
             return
 
         name, ok = QInputDialog.getText(
-            self,
-            "Dodaj kategorię",
-            "Nazwa nowej kategorii dodatków:"
+            self, "Dodaj kategorię", "Nazwa nowej kategorii dodatków:"
         )
         if ok and name.strip():
             try:
                 # W db_manager może być np. add_category() dla kategorii dodatków
                 self.db_manager.add_category(name.strip())
-                QMessageBox.information(self, "Sukces", f"Dodano kategorię: {name.strip()}")
+                QMessageBox.information(
+                    self, "Sukces", f"Dodano kategorię: {name.strip()}"
+                )
                 self.load_data()
             except Exception as e:
-                QMessageBox.warning(
-                    self,
-                    "Błąd",
-                    f"Nie udało się dodać kategorii: {e}"
-                )
+                QMessageBox.warning(self, "Błąd", f"Nie udało się dodać kategorii: {e}")
 
     def update_item_in_db(self, item_id: int, new_values: List[Any]) -> None:
         """
@@ -137,9 +134,7 @@ class AdditiveCategoriesCrudScreen(BaseCrudListScreen):
             self.db_manager.update_category(item_id, new_name)
         except Exception as e:
             QMessageBox.warning(
-                self,
-                "Błąd",
-                f"Nie udało się zaktualizować kategorii: {e}"
+                self, "Błąd", f"Nie udało się zaktualizować kategorii: {e}"
             )
             raise
 
@@ -155,9 +150,5 @@ class AdditiveCategoriesCrudScreen(BaseCrudListScreen):
             # W db_manager: np. delete_category(item_id)
             self.db_manager.delete_category(item_id)
         except Exception as e:
-            QMessageBox.warning(
-                self,
-                "Błąd",
-                f"Nie udało się usunąć kategorii: {e}"
-            )
+            QMessageBox.warning(self, "Błąd", f"Nie udało się usunąć kategorii: {e}")
             raise
