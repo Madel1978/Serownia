@@ -1,0 +1,4 @@
+PyQt5==5.15.9
+# lub
+# PySide6==6.4.2
+# i ewentualnie inne pakiety
